@@ -1,0 +1,118 @@
+{
+  "emails": [
+    {
+      "id": "demo_001",
+      "metadata": {
+        "sender": "sarah.chen@company.com",
+        "subject": "URGENT: Client presentation moved to tomorrow - Need your input ASAP",
+        "date": "2025-06-03T09:15:00Z",
+        "category": "urgent",
+        "expected_priority": 5
+      },
+      "content": {
+        "body": "Hi Jerry,\n\nI hope this email finds you well. Unfortunately, I have some urgent news regarding our Q2 client presentation.\n\nThe client has requested to move our presentation from Friday to TOMORROW (Thursday) at 2:00 PM. This is extremely critical for closing the deal worth $2.5M.\n\nACTION REQUIRED:\n- Please review the updated slides (attached) and provide feedback by 6 PM today\n- Confirm your availability for tomorrow's presentation\n- Prepare the financial projections section you're responsible for\n\nThis is a make-or-break moment for our team. I know it's short notice, but your expertise is crucial for this presentation.\n\nPlease reply ASAP to confirm you can make it work.\n\nBest regards,\nSarah Chen\nDirector of Sales",
+        "expected_analysis": {
+          "action_items": ["review slides", "confirm availability", "prepare financial projections"],
+          "deadline": "today 6 PM",
+          "urgency_score": 0.9,
+          "sentiment": "urgent"
+        }
+      }
+    },
+    {
+      "id": "demo_002",
+      "metadata": {
+        "sender": "security-alert@company.com",
+        "subject": "⚠️ SECURITY BREACH DETECTED - Immediate Action Required",
+        "date": "2025-06-03T11:20:00Z",
+        "category": "security",
+        "expected_priority": 5
+      },
+      "content": {
+        "body": "SECURITY ALERT - CONFIDENTIAL\n\nWe have detected unauthorized access attempts on your company account from the following IP: 192.168.1.100\n\nIMMEDIATE ACTIONS REQUIRED:\n1. Change your password within the next 2 hours\n2. Review your recent login activity at security.company.com\n3. Report any suspicious emails to security@company.com\n4. Enable two-factor authentication if not already active\n\nFAILURE TO COMPLY WITHIN 2 HOURS WILL RESULT IN ACCOUNT SUSPENSION.\n\nDo not forward this email. Do not ignore this warning.\n\nIf you did not authorize these login attempts, respond immediately.\n\nSecurity Operations Team\nCompany IT Security",
+        "expected_analysis": {
+          "action_items": ["change password", "review login activity", "report suspicious emails", "enable 2FA"],
+          "deadline": "2 hours",
+          "urgency_score": 1.0,
+          "sentiment": "critical"
+        }
+      }
+    },
+    {
+      "id": "demo_003",
+      "metadata": {
+        "sender": "john.williams@partner-company.com",
+        "subject": "Partnership proposal - Excited to collaborate!",
+        "date": "2025-06-03T14:30:00Z",
+        "category": "business",
+        "expected_priority": 3
+      },
+      "content": {
+        "body": "Dear Jerry,\n\nI hope you're having a great week! I wanted to follow up on our conversation at the conference last month about potential collaboration opportunities.\n\nOur companies seem perfectly aligned, and I believe we could create something amazing together. I've attached a partnership proposal that outlines:\n\n• Joint marketing initiatives that could increase both our market reach by 40%\n• Shared technology resources and expertise\n• Co-development of new products for Q4 2025\n\nI'm really excited about the possibilities here. Would you be available for a call next week to discuss this further? I'm flexible with timing and can accommodate your schedule.\n\nLooking forward to your thoughts and hopefully a positive response!\n\nWarm regards,\nJohn Williams\nVP of Business Development\nPartner Company Inc.",
+        "expected_analysis": {
+          "action_items": ["review partnership proposal", "schedule call"],
+          "deadline": "next week",
+          "urgency_score": 0.3,
+          "sentiment": "positive"
+        }
+      }
+    },
+    {
+      "id": "demo_004",
+      "metadata": {
+        "sender": "complaints@customerservice.com",
+        "subject": "COMPLAINT: Service disruption affecting 500+ users - Need immediate response",
+        "date": "2025-06-03T08:45:00Z",
+        "category": "customer_issue",
+        "expected_priority": 5
+      },
+      "content": {
+        "body": "URGENT CUSTOMER COMPLAINT\n\nCustomer: TechCorp Industries\nIssue: Service disruption affecting their entire team (500+ users)\nImpact: Critical business operations halted\nTime affected: 3 hours and counting\n\nThe customer is extremely upset and threatening to cancel their $50,000/year contract. They've been trying to reach our technical team for the past 3 hours with no response.\n\nREQUIRED ACTIONS:\n- Contact the customer within 30 minutes\n- Provide immediate technical support\n- Offer compensation for the disruption\n- Escalate to senior management if necessary\n\nCustomer contact: Mike Peterson, CTO (mike.peterson@techcorp.com, +1-555-0123)\n\nThis is affecting our reputation and could result in significant revenue loss. Please treat this with highest priority.\n\nCustomer Service Team\nTicket #CS-2025-0603-001",
+        "expected_analysis": {
+          "action_items": ["contact customer", "provide technical support", "offer compensation", "escalate to management"],
+          "deadline": "30 minutes",
+          "urgency_score": 0.95,
+          "sentiment": "negative"
+        }
+      }
+    },
+    {
+      "id": "demo_005",
+      "metadata": {
+        "sender": "deals@shopping-mall.com",
+        "subject": "🎉 MEGA SALE: 70% OFF Everything - Last 6 Hours Only!",
+        "date": "2025-06-03T16:20:00Z",
+        "category": "promotional",
+        "expected_priority": 1
+      },
+      "content": {
+        "body": "🔥 FINAL HOURS - BIGGEST SALE OF THE YEAR! 🔥\n\nDon't miss out on these incredible deals:\n\n✨ 70% OFF all electronics\n✨ 60% OFF fashion and accessories\n✨ 50% OFF home and garden\n✨ FREE shipping on orders over $50\n\n⏰ SALE ENDS IN 6 HOURS - MIDNIGHT TONIGHT!\n\nOur bestsellers are flying off the shelves:\n• iPhone 15 Pro - Was $999, NOW $299\n• Designer handbags - Was $400, NOW $120\n• 4K Smart TV - Was $800, NOW $240\n\n[SHOP NOW] [Limited quantities available]\n\nDon't regret missing this once-in-a-lifetime opportunity!\n\nQuestions? Reply to this email or call 1-800-SHOP-NOW\n\nHappy shopping!\nThe Shopping Mall Team\n\nUnsubscribe",
+        "expected_analysis": {
+          "action_items": [],
+          "deadline": null,
+          "urgency_score": 0.1,
+          "sentiment": "promotional"
+        }
+      }
+    },
+    {
+      "id": "demo_006",
+      "metadata": {
+        "sender": "david.liu@finance.company.com",
+        "subject": "URGENT: Complete Q2 Financial Development Report by 5PM - Board Meeting Tomorrow",
+        "date": "2025-06-03T13:45:00Z",
+        "category": "work_assignment",
+        "expected_priority": 5
+      },
+      "content": {
+        "body": "Jerry,\n\nEmergency board meeting tomorrow 9 AM. I need you to complete the Q2 Financial Development Report immediately.\n\nACTION REQUIRED - Complete by 5:00 PM TODAY:\n\n• Create Q2 vs Q1 revenue comparison chart with $8.2M total revenue data\n• Analyze development budget performance showing $1.8M spend (15% increase)\n• Generate ROI analysis for all active projects using attached financial data\n• Prepare cash flow projection for Q3 based on current +$2.1M surplus\n• Write executive summary highlighting 18.5% operating margin improvement\n\nSPECIFIC DELIVERABLES:\n1. Complete financial report in Excel format\n2. PowerPoint presentation with 8 key slides\n3. Executive summary document (2 pages maximum)\n\nPlease use our standard financial template from SharePoint and include these metrics:\n- R&D allocation: $950K for AI project development\n- Marketing ROI: 3.2x return on $600K investment\n- Q3 budget recommendations for $12M allocation\n\nPlease confirm you can deliver this by 5 PM and send progress updates every 2 hours.\n\nThis is critical - CEO requested your analysis specifically for tomorrow's $12M budget decision.\n\nDavid Liu\nCFO & Finance Director\nPhone: +1-555-0198",
+        "expected_analysis": {
+          "action_items": ["create revenue comparison", "analyze budget performance", "generate ROI analysis", "prepare cash flow projection", "write executive summary"],
+          "deadline": "5 PM today",
+          "urgency_score": 0.9,
+          "sentiment": "urgent"
+        }
+      }
+    }
+  ]
+} 

@@ -1,0 +1,29 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.idea/
+.vscode/
+.cursor/
+
+# macOS
+.DS_Store
+
+# Data and logs
+data/analysis_results/
+logs/
+*.log
+
+# Temporary files
+~/
+tmp/

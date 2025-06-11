@@ -1,0 +1,60 @@
+# Smart Email AI - MCP邮件处理工具配置文件
+
+# 数据处理配置
+data_processing:
+  # 邮件处理设置
+  email_processing:
+    max_content_length: 1000000  # 1MB
+    preserve_formatting: true
+    extract_metadata: true
+    
+  # 文本清理设置
+  text_cleaning:
+    remove_extra_whitespace: true
+    normalize_line_endings: true
+    strip_html_comments: true
+
+# Outlook邮件解析器配置
+parser_settings:
+  # 转发邮件识别模式
+  forward_patterns:
+    - "-----\\s*原始邮件\\s*-----"
+    - "-----\\s*Forwarded message\\s*-----"
+    - "发件人:"
+    - "From:"
+    - "<div style=[\"']border:none;border-top:solid #E1E1E1 1\\.0pt"
+    - "<div[^>]*border-top[^>]*>"
+  
+  # 邮件头字段匹配模式
+  header_patterns:
+    from: ["发件人[:\\s]*(.+?)(?:<br|$)", "From[:\\s]*(.+?)(?:<br|$)"]
+    to: ["收件人[:\\s]*(.+?)(?:<br|$)", "To[:\\s]*(.+?)(?:<br|$)"]
+    cc: ["抄送[:\\s]*(.+?)(?:<br|$)", "CC[:\\s]*(.+?)(?:<br|$)"]
+    subject: ["主题[:\\s]*(.+?)(?:<br|$)", "Subject[:\\s]*(.+?)(?:<br|$)"]
+    date: ["发送时间[:\\s]*(.+?)(?:<br|$)", "Sent[:\\s]*(.+?)(?:<br|$)"]
+  
+  # 表格检测配置
+  table_detection:
+    min_rows: 2
+    skip_layout_tables: true
+    detect_headers: true
+    max_empty_cells_ratio: 0.3
+
+# 系统运行配置
+system_settings:
+  demo_mode: false
+  log_level: "INFO"
+  
+  # 文件路径配置
+  paths:
+    demo_emails: "data/demo_emails.json"
+    output_dir: "data/processed_emails/"
+    temp_dir: "tmp/"
+
+# MCP服务配置
+mcp_settings:
+  server_name: "smart_email_ai"
+  enable_debug: false
+  max_email_size: "10MB"
+  timeout_seconds: 30
+  tools_prefix: "email_" 
