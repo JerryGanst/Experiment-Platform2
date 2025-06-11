@@ -2,11 +2,16 @@
 """
 Smart Email AI - 项目主入口
 
+支持两种运行模式：
+1. 命令行模式（人类用户）- 交互式工具
+2. MCP服务器模式（Claude Desktop）- 机器对机器通信
+
 使用方法:
     python main.py                     # 启动交互式演示
     python main.py --demo              # 运行演示模式  
     python main.py --analyze <email>   # 分析指定邮件
     python main.py --test              # 运行测试
+    python main.py --mcp               # 启动MCP服务器（给Claude Desktop用）
 """
 
 import sys
@@ -27,11 +32,18 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 示例用法:
-  python main.py                    # 交互式模式
+  python main.py                    # 交互式模式（人类用户）
   python main.py --demo             # 演示模式
   python main.py --analyze file.html    # 分析邮件文件
   python main.py --test             # 运行系统测试
+  python main.py --mcp              # MCP服务器模式（Claude Desktop）
         """
+    )
+    
+    parser.add_argument(
+        "--mcp", 
+        action="store_true", 
+        help="启动MCP服务器模式（用于Claude Desktop连接）"
     )
     
     parser.add_argument(
@@ -63,6 +75,15 @@ def main():
     args = parser.parse_args()
     
     try:
+        if args.mcp:
+            # MCP服务器模式 - 给Claude Desktop用
+            print("🚀 启动MCP服务器模式...")
+            print("📡 等待Claude Desktop连接...")
+            from smart_email_ai.main import mcp
+            mcp.run(transport='stdio')
+            return 0
+        
+        # 命令行模式 - 给人类用户用    
         system = RefactoredEmailSystem()
         
         if args.demo:
@@ -98,8 +119,9 @@ def main():
             system.show_system_info()
             print("\n可用命令:")
             print("  --demo    : 运行演示")
-            print("  --analyze : 分析邮件文件")
+            print("  --analyze : 分析邮件文件") 
             print("  --test    : 运行测试")
+            print("  --mcp     : 启动MCP服务器（Claude Desktop用）")
             print("  --help    : 查看帮助")
             
     except Exception as e:

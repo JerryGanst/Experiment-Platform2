@@ -116,6 +116,14 @@ python main.py
 python main.py --test
 ```
 
+#### 5. MCP服务器模式（Claude Desktop）
+```bash
+# 启动MCP服务器供Claude Desktop使用
+python main.py --mcp
+```
+
+详细的Claude Desktop配置请参见：[Claude Desktop配置指南](docs/claude-desktop-setup.md)
+
 ## 🔧 配置说明
 
 系统配置文件位于 `data/config.yaml`，包含以下主要配置：

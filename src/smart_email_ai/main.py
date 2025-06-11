@@ -293,43 +293,55 @@ class RefactoredEmailSystem:
         return result
 
 
-# 创建全局系统实例
-email_system = RefactoredEmailSystem()
+# 创建全局系统实例（延迟初始化）
+email_system = None
+
+def get_email_system():
+    """获取邮件系统实例（延迟初始化）"""
+    global email_system
+    if email_system is None:
+        email_system = RefactoredEmailSystem()
+    return email_system
 
 # MCP工具函数 - 使用解耦架构
 
 @mcp.tool()
-def setup_refactored_email() -> str:
-    """设置解耦架构的智能邮件系统"""
-    return email_system.enable_demo_mode()
+def setup_email_system() -> str:
+    """初始化邮件处理系统"""
+    system = get_email_system()
+    return system.enable_demo_mode()
 
 @mcp.tool()
-def analyze_emails_refactored() -> str:
-    """使用解耦架构分析邮件"""
-    return email_system.analyze_demo_emails()
+def analyze_demo_emails() -> str:
+    """分析演示邮件数据"""
+    system = get_email_system()
+    return system.analyze_demo_emails()
 
 @mcp.tool()
-def parse_outlook_email_refactored(html_content: str) -> str:
-    """使用解耦架构解析Outlook邮件
+def parse_outlook_email(html_content: str) -> str:
+    """解析Outlook邮件HTML内容
     
     Args:
         html_content: Outlook邮件的HTML内容
     """
-    return email_system.parse_outlook_email(html_content)
+    system = get_email_system()
+    return system.parse_outlook_email(html_content)
 
 @mcp.tool()
-def analyze_outlook_email_refactored(html_content: str) -> str:
-    """使用解耦架构解析并分析Outlook邮件
+def analyze_outlook_email_structure(html_content: str) -> str:
+    """分析Outlook邮件结构并提供结构化数据
     
     Args:
         html_content: Outlook邮件的HTML内容
     """
-    return email_system.analyze_outlook_email_with_ai(html_content)
+    system = get_email_system()
+    return system.analyze_outlook_email_with_ai(html_content)
 
 @mcp.tool()
-def get_system_status_refactored() -> str:
-    """获取解耦架构系统状态"""
-    return email_system.get_system_status()
+def get_system_status() -> str:
+    """获取邮件处理系统状态"""
+    system = get_email_system()
+    return system.get_system_status()
 
 @mcp.tool()
 def test_config_loading() -> str:
@@ -380,5 +392,39 @@ def test_demo_emails_loading() -> str:
     except Exception as e:
         return f"❌ 演示邮件加载失败: {str(e)}"
 
-if __name__ == "__main__":
-    mcp.run(transport='stdio') 
+@mcp.tool()
+def extract_outlook_tables(html_content: str) -> str:
+    """专门提取Outlook邮件中的表格数据
+    
+    Args:
+        html_content: Outlook邮件的HTML内容
+    """
+    try:
+        # 解析邮件
+        system = get_email_system()
+        parsed_section = system.outlook_parser.parse_email(html_content)
+        
+        if not parsed_section.tables:
+            return "📋 未在邮件中发现数据表格"
+        
+        result = f"📊 **提取到 {len(parsed_section.tables)} 个表格**\n\n"
+        
+        for i, table in enumerate(parsed_section.tables, 1):
+            result += f"## 表格 {i}\n"
+            result += f"**规格:** {table['row_count']} 行 × {table['col_count']} 列\n\n"
+            result += "**Markdown格式:**\n"
+            result += table['markdown'] + "\n\n"
+            
+            # 提供原始数据
+            result += "**原始数据:**\n"
+            for j, row in enumerate(table['rows']):
+                result += f"行{j+1}: {' | '.join(row)}\n"
+            result += "\n---\n\n"
+        
+        return result
+        
+    except Exception as e:
+        return f"❌ 表格提取失败: {str(e)}"
+
+# MCP服务器运行逻辑
+# 由根目录的 main.py --mcp 调用，不再独立运行 
