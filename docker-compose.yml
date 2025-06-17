@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  excel-to-markdown:
+    build: .
+    container_name: excel-markdown-converter
+    volumes:
+      # 挂载输入文件目录
+      - ./file:/app/input:ro
+      # 挂载输出目录
+      - ./output:/app/output
+      # 挂载当前目录（用于开发）
+      - .:/app
+    environment:
+      - PYTHONPATH=/app
+    working_dir: /app
+    # 保持容器运行
+    tty: true
+    stdin_open: true
+    
+  # Web服务版本（可选）
+  web-converter:
+    build: .
+    container_name: excel-markdown-web
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./file:/app/input:ro
+      - ./output:/app/output
+      - .:/app
+    environment:
+      - PYTHONPATH=/app
+    working_dir: /app
+    # 运行简单的HTTP服务器
+    command: python -m http.server 8000
+    
+networks:
+  default:
+    name: excel-markdown-network 
