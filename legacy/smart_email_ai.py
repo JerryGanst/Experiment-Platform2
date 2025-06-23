@@ -978,6 +978,24 @@ This is critical - CEO requested your analysis specifically for tomorrow's $12M 
 David Liu
 CFO & Finance Director
 Phone: +1-555-0198"""
+    },
+    {
+        "sender": "no-reply@accounts.google.com",
+        "subject": "安全提醒：在 Mac 设备上有新的登录活动",
+        "date": "2025-06-11 09:30:00",
+        "body": """我们发现您的 Google 账号 (jerryganst666@gmail.com) 在一部 Mac 设备上有新的登录活动。\n如果这是您本人的操作，则无需采取任何行动。\n如果这不是您本人的操作，我们会帮助您保护您的账号。\n\n查看活动\n您也可以访问以下网址查看安全性活动：\nhttps://myaccount.google.com/notifications"""
+    },
+    {
+        "sender": "no-reply@accounts.google.com",
+        "subject": "安全提醒：\"Claude for Google Drive\" 已获得对您的 Google 账号的访问权限",
+        "date": "2025-06-11 09:31:00",
+        "body": """"Claude for Google Drive"已获得对您的 Google 账号的访问权限 (jerryganst666@gmail.com)。\n如果您并未授予访问权限，则应检查此活动，并确保您的账号安全。\n\n查看活动\n您也可以访问以下网址查看安全性活动：\nhttps://myaccount.google.com/notifications"""
+    },
+    {
+        "sender": "no-reply@accounts.google.com",
+        "subject": "安全提醒：在 Android 设备上有新的登录活动",
+        "date": "2025-06-11 14:37:00",
+        "body": """我们发现您的 Google 账号 (jerryganst666@gmail.com) 在一部 Android 设备上有新的登录活动。\n如果这是您本人的操作，则无需采取任何行动。\n如果这不是您本人的操作，我们会帮助您保护您的账号。\n\n查看活动\n您也可以访问以下网址查看安全性活动：\nhttps://myaccount.google.com/notifications"""
     }
 ]
 

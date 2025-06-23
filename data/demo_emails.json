@@ -113,6 +113,105 @@
           "sentiment": "urgent"
         }
       }
+    },
+    {
+      "id": "demo_007",
+      "metadata": {
+        "sender": "no-reply@accounts.google.com",
+        "subject": "安全提醒：在 Mac 设备上有新的登录活动",
+        "date": "2025-06-11T09:30:00Z",
+        "category": "security",
+        "expected_priority": 4
+      },
+      "content": {
+        "body": "我们发现您的 Google 账号 (jerryganst666@gmail.com) 在一部 Mac 设备上有新的登录活动。\n如果这是您本人的操作，则无需采取任何行动。\n如果这不是您本人的操作，我们会帮助您保护您的账号。\n\n查看活动\n您也可以访问以下网址查看安全性活动：\nhttps://myaccount.google.com/notifications",
+        "expected_analysis": {
+          "action_items": ["check recent activity"],
+          "deadline": null,
+          "urgency_score": 0.7,
+          "sentiment": "security"
+        }
+      }
+    },
+    {
+      "id": "demo_008",
+      "metadata": {
+        "sender": "no-reply@accounts.google.com",
+        "subject": "安全提醒：\"Claude for Google Drive\" 已获得对您的 Google 账号的访问权限",
+        "date": "2025-06-11T09:31:00Z",
+        "category": "security",
+        "expected_priority": 4
+      },
+      "content": {
+        "body": "\"Claude for Google Drive\"已获得对您的 Google 账号的访问权限 (jerryganst666@gmail.com)。\n如果您并未授予访问权限，则应检查此活动，并确保您的账号安全。\n\n查看活动\n您也可以访问以下网址查看安全性活动：\nhttps://myaccount.google.com/notifications",
+        "expected_analysis": {
+          "action_items": ["review app permissions"],
+          "deadline": null,
+          "urgency_score": 0.6,
+          "sentiment": "security"
+        }
+      }
+    },
+    {
+      "id": "demo_009",
+      "metadata": {
+        "sender": "no-reply@accounts.google.com",
+        "subject": "安全提醒：在 Android 设备上有新的登录活动",
+        "date": "2025-06-11T14:37:00Z",
+        "category": "security",
+        "expected_priority": 4
+      },
+      "content": {
+        "body": "我们发现您的 Google 账号 (jerryganst666@gmail.com) 在一部 Android 设备上有新的登录活动。\n如果这是您本人的操作，则无需采取任何行动。\n如果这不是您本人的操作，我们会帮助您保护您的账号。\n\n查看活动\n您也可以访问以下网址查看安全性活动：\nhttps://myaccount.google.com/notifications",
+        "expected_analysis": {
+          "action_items": ["check recent activity"],
+          "deadline": null,
+          "urgency_score": 0.7,
+          "sentiment": "security"
+        }
+      }
+    },
+    {
+      "id": "demo_010",
+      "metadata": {
+        "sender": "Shengrui.Jiang@luxshare-ict.com",
+        "subject": "回复: LE3GZ248-SD-R_制程&治具评估",
+        "date": "2024-12-29T01:28:00Z",
+        "category": "technical_discussion",
+        "expected_priority": 4
+      },
+      "content": {
+        "body_html": "<!DOCTYPE html><html><head><meta charset='gb2312'><title>回复: LE3GZ248-SD-R_制程治具评估</title></head><body>这是一个复杂的Outlook HTML邮件，包含完整的Word格式邮件内容，用于测试Outlook解析器的HTML解析能力。文件路径：回复 LE3GZ248-SD-R_制程治具评估.htm</body></html>",
+        "html_file_path": "回复 LE3GZ248-SD-R_制程治具评估.htm",
+        "attachments_folder": "回复 LE3GZ248-SD-R_制程治具评估.files",
+        "body": "Peter:\n        根据各位的建议，现回复如下：\n\n1、OB5、OB6、OB7&OA5、OA6、OA7位置过高线材改高——由PCB设计师进行改蚀，参考下图所示；\n    建议PCP可接受此调整\n\n2、30AWG对绞线及线材空间不足——使用32AWG的对绞线材\n    建议PCP考虑使用32AWG的细线材，替换原有30AWG的线材\n\n3、A67、68、69未配对绞2C1D的线材，将可能导致串扰的问题——使用对绞2C1D线材\n   A67PIN连接对绞线材的地线与SAS线材空间不足，建议将线材的地PIN改为GND，即可合并A67、\n\n按照电商优化要求进行调整。\n\n原邮件对话包含多位工程师的技术讨论，涉及PCB设计、线材规格、信号完整性等专业话题。主要参与者：Peter Wu, Shengrui Jiang, Carey Zhong等，围绕GENZ 4C+连接器的制程治具评估问题进行深入交流。",
+        "images": [
+          "image001.jpg",
+          "image002.png", 
+          "image003.gif",
+          "image004.jpg",
+          "image005.jpg",
+          "image006.jpg",
+          "image007.jpg",
+          "image008.gif",
+          "image009.jpg",
+          "image010.jpg",
+          "image011.jpg",
+          "image012.jpg",
+          "image013.jpg",
+          "image014.gif"
+        ],
+        "expected_analysis": {
+          "action_items": ["PCB设计师进行改蚀", "PCP考虑使用32AWG线材", "使用对绞2C1D线材", "将地PIN改为GND"],
+          "deadline": null,
+          "urgency_score": 0.6,
+          "sentiment": "technical",
+          "participants": ["Peter Wu", "Shengrui Jiang", "Carey Zhong", "Alter Wang", "Liming Zheng", "Peace Wang", "Xiaodeng Wang", "George Zeng", "Shucong Zeng", "Roger Lian", "Kenson Lo2", "Jinye Lei", "Enqing Yan", "Anjian Liang"],
+          "technical_topics": ["PCB设计", "线材规格", "信号完整性", "连接器评估", "制程治具"],
+          "email_thread": true,
+          "reply_count": 4
+        }
+      }
     }
   ]
 } 
