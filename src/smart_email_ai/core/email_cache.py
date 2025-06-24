@@ -196,7 +196,7 @@ class SQLiteCache:
                 
                 return True
         except Exception as e:
-            print(f"[缓存错误] 存储邮件失败: {e}")
+            # 移除print语句，避免MCP JSON解析错误
             return False
     
     def get_recent_emails(self, count: int = 10, account_type: str = 'icloud') -> List[Dict[str, Any]]:
@@ -249,7 +249,7 @@ class SQLiteCache:
                 
                 return results
         except Exception as e:
-            print(f"[缓存错误] 搜索邮件失败: {e}")
+            # 移除print语句，避免MCP JSON解析错误
             return []
     
     def get_cache_stats(self) -> Dict[str, Any]:
@@ -275,7 +275,7 @@ class SQLiteCache:
                     'db_size_mb': os.path.getsize(self.db_path) / 1024 / 1024 if os.path.exists(self.db_path) else 0
                 }
         except Exception as e:
-            print(f"[缓存错误] 获取统计信息失败: {e}")
+            # 移除print语句，避免MCP JSON解析错误
             return {}
     
     def _calculate_importance(self, email_data: Dict[str, Any]) -> int:
@@ -399,6 +399,42 @@ class EmailCacheManager:
         """清空所有缓存"""
         self.memory_cache.clear()
         # SQLite缓存保留，只清空内存
+    
+    def clear_cache(self, account_type: str = None):
+        """清空指定类型的缓存
+        
+        Args:
+            account_type: 账户类型（如'icloud'），为None时清空所有缓存
+        """
+        # 清空内存缓存
+        self.memory_cache.clear()
+        
+        # 如果指定了账户类型，清空对应的SQLite缓存
+        if account_type:
+            try:
+                with sqlite3.connect(self.sqlite_cache.db_path) as conn:
+                    conn.execute("DELETE FROM emails_index WHERE account_type = ?", (account_type,))
+                    conn.execute("DELETE FROM email_content WHERE email_id IN (SELECT id FROM emails_index WHERE account_type = ?)", (account_type,))
+                    conn.execute("DELETE FROM email_fts WHERE email_id IN (SELECT id FROM emails_index WHERE account_type = ?)", (account_type,))
+                    conn.commit()
+                    # 移除print语句，避免MCP JSON解析错误
+                    pass
+            except Exception as e:
+                # 移除print语句，避免MCP JSON解析错误  
+                pass
+        else:
+            # 清空所有SQLite缓存
+            try:
+                with sqlite3.connect(self.sqlite_cache.db_path) as conn:
+                    conn.execute("DELETE FROM emails_index")
+                    conn.execute("DELETE FROM email_content")
+                    conn.execute("DELETE FROM email_fts")
+                    conn.commit()
+                    # 移除print语句，避免MCP JSON解析错误
+                    pass
+            except Exception as e:
+                # 移除print语句，避免MCP JSON解析错误
+                pass
 
 
 # 全局缓存管理器实例

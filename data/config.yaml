@@ -57,4 +57,121 @@ mcp_settings:
   enable_debug: false
   max_email_size: "10MB"
   timeout_seconds: 30
-  tools_prefix: "email_" 
+  tools_prefix: "email_"
+
+# 时区配置
+timezone:
+  default: "UTC+8"  # 中国标准时间
+  display_format: "%Y年%m月%d日 %H:%M:%S"
+  date_formats:
+    - "%Y-%m-%d %H:%M:%S"
+    - "%Y-%m-%d"
+    - "%m/%d/%Y"
+    - "%d/%m/%Y"
+    - "%Y年%m月%d日"
+
+# 邮件发送配置
+email_sender:
+  default_sender:
+    email: "jerrywsx@icloud.com"
+    name: "Smart Email AI"
+    provider: "icloud"
+  
+  smtp_servers:
+    icloud:
+      server: "smtp.mail.me.com"
+      port: 587
+      use_tls: true
+      security: "STARTTLS"
+    gmail:
+      server: "smtp.gmail.com"
+      port: 587
+      use_tls: true
+      security: "STARTTLS"
+    outlook:
+      server: "smtp.office365.com"
+      port: 587
+      use_tls: true
+      security: "STARTTLS"
+  
+  features:
+    custom_sender: true       # 支持自定义发件人
+    bulk_email: true          # 支持批量邮件
+    attachments: true         # 支持附件
+    html_email: true          # 支持HTML邮件
+    backward_compatible: true # 向后兼容原有接口
+
+# 缓存配置
+cache:
+  enabled: true
+  
+  # L1 内存缓存
+  memory:
+    max_size: 100
+    ttl_seconds: 300  # 5分钟
+    
+  # L2 SQLite缓存
+  sqlite:
+    db_path: "data/email_cache.db"
+    auto_vacuum: true
+    
+  # 缓存策略
+  strategy:
+    recent_emails_cache_count: 50
+    search_results_cache_time: 300
+    force_refresh_interval: 3600  # 1小时
+
+# 邮件解析配置
+parser:
+  # Outlook 邮件解析
+  outlook:
+    # 转发邮件识别模式
+    forward_patterns:
+      - "转发:"
+      - "Fwd:"
+      - "FW:"
+      - "Re:"
+      - "回复:"
+    
+    # 表格检测设置
+    table_detection:
+      enabled: true
+      skip_layout_tables: true
+      min_columns: 2
+      min_rows: 2
+      
+    # 邮件头部信息提取
+    header_extraction:
+      extract_from: true
+      extract_to: true
+      extract_cc: true
+      extract_date: true
+      extract_subject: true
+
+# 日志配置
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/smart_email_ai.log"
+  max_size: "10MB"
+  backup_count: 5
+
+# 安全配置
+security:
+  app_passwords_only: true      # 仅使用应用专用密码
+  ssl_verify: true              # SSL证书验证
+  connection_timeout: 30        # 连接超时（秒）
+  max_retry_attempts: 3         # 最大重试次数
+
+# 性能配置
+performance:
+  max_emails_per_request: 50    # 单次请求最大邮件数
+  concurrent_connections: 5     # 并发连接数
+  request_delay: 0.1           # 请求间隔（秒）
+  
+# 开发和调试配置
+development:
+  debug_mode: false
+  demo_mode: false
+  enable_mock_data: false
+  log_email_content: false     # 是否记录邮件内容（隐私考虑） 

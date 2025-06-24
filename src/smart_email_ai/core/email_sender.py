@@ -19,17 +19,26 @@ from pathlib import Path
 
 
 class EmailSender:
-    """邮件发送器 - 支持多种邮件服务器"""
+    """邮件发送器 - 支持多种邮件服务器和动态发件人配置"""
     
-    def __init__(self, email_address: str = None, password: str = None):
+    def __init__(self, email_address: str = None, password: str = None, use_default: bool = True):
         """初始化邮件发送器
         
         Args:
-            email_address: 发件人邮箱地址（默认使用Jerry的iCloud）
+            email_address: 发件人邮箱地址
             password: 邮箱密码或应用专用密码
+            use_default: 是否使用默认配置（Jerry的iCloud）
         """
-        self.email_address = email_address or "jerrywsx@icloud.com"
-        self.password = password or "fsil-npvx-rbdo-vman"  # 应用专用密码
+        if use_default and not email_address:
+            # 默认使用Jerry的iCloud配置（向后兼容）
+            self.email_address = "jerrywsx@icloud.com"
+            self.password = "fsil-npvx-rbdo-vman"  # 应用专用密码
+        else:
+            # 使用提供的配置
+            if not email_address or not password:
+                raise ValueError("使用自定义配置时，必须提供email_address和password")
+            self.email_address = email_address
+            self.password = password
         
         # iCloud SMTP 配置
         self.smtp_config = {
@@ -377,6 +386,28 @@ Smart Email AI 分析报告
                     'email': self.email_address
                 }
             }
+
+    @classmethod
+    def create_custom_sender(cls, email_address: str, password: str) -> 'EmailSender':
+        """创建自定义发件人实例
+        
+        Args:
+            email_address: 发件人邮箱地址
+            password: 邮箱密码或应用专用密码
+            
+        Returns:
+            EmailSender: 配置好的邮件发送器实例
+        """
+        return cls(email_address=email_address, password=password, use_default=False)
+    
+    @classmethod
+    def create_default_sender(cls) -> 'EmailSender':
+        """创建默认发件人实例（Jerry的iCloud）
+        
+        Returns:
+            EmailSender: 使用默认配置的邮件发送器实例
+        """
+        return cls(use_default=True)
 
 
 # 全局邮件发送器实例
