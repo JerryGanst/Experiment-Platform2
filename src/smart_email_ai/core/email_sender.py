@@ -29,12 +29,12 @@ class EmailSender:
             password: 邮箱密码或应用专用密码
             use_default: 是否使用默认配置（Jerry的iCloud）
         """
-        if use_default and not email_address:
-            # 默认使用Jerry的iCloud配置（向后兼容）
-            self.email_address = "jerrywsx@icloud.com"
-            self.password = "fsil-npvx-rbdo-vman"  # 应用专用密码
+        if use_default:
+            # 使用默认配置，对缺失的参数使用默认值
+            self.email_address = email_address or "jerrywsx@icloud.com"
+            self.password = password or "fsil-npvx-rbdo-vman"  # 应用专用密码
         else:
-            # 使用提供的配置
+            # 使用自定义配置时，必须提供完整参数
             if not email_address or not password:
                 raise ValueError("使用自定义配置时，必须提供email_address和password")
             self.email_address = email_address
