@@ -55,9 +55,10 @@ class iCloudConnector:
                     self.IMAP_PORT, 
                     ssl_context=context
                 )
-                self._log_info("✅ 使用标准SSL连接成功（推荐模式）")
+                # 移除print语句，避免MCP JSON解析错误
             except ssl.SSLError as ssl_err:
                 # 如果SSL验证失败，尝试禁用证书验证（仅用于开发/测试）
+                # 移除print语句，避免MCP JSON解析错误
                 self._log_info(f"标准SSL连接失败: {ssl_err}")
                 self._log_info("🔧 尝试使用宽松SSL设置...")
                 
@@ -71,6 +72,7 @@ class iCloudConnector:
                     self.IMAP_PORT, 
                     ssl_context=context
                 )
+                # 移除print语句，避免MCP JSON解析错误
                 self._log_info("⚠️ 使用宽松SSL连接成功（降级模式）")
             
             # 登录验证
@@ -80,6 +82,7 @@ class iCloudConnector:
             self.mail.select('INBOX')
             
             self.connected = True
+            # 移除print语句，避免MCP JSON解析错误
             self._log_info("🎉 iCloud邮箱连接和登录成功")
             return True
             
@@ -189,16 +192,16 @@ class iCloudConnector:
             if isinstance(mail_id, str):
                 mail_id = mail_id.encode()
             
-            self._log_info(f"获取邮件 ID: {mail_id}")
+            # 移除print语句，避免MCP JSON解析错误
             # 修复：使用BODY.PEEK[]而不是RFC822，避免标记邮件为已读
             status, msg_data = self.mail.fetch(mail_id, '(BODY.PEEK[])')
-            self._log_info(f"IMAP fetch状态: {status}, 数据长度: {len(msg_data) if msg_data else 0}")
+            # 移除print语句，避免MCP JSON解析错误
             
             if status == 'OK' and msg_data and len(msg_data) > 0:
                 # 检查返回数据的结构
-                self._log_info(f"消息数据类型: {type(msg_data[0])}, 内容: {str(msg_data[0])[:100]}")
+                # 移除print语句，避免MCP JSON解析错误
                 
-                # 处理不同的返回格式
+                # 处理邮件数据
                 raw_email = None
                 
                 if isinstance(msg_data[0], tuple) and len(msg_data[0]) >= 2:
@@ -294,15 +297,17 @@ class iCloudConnector:
         if use_cache:
             cached_emails = email_cache_manager.get_recent_emails(count, 'icloud')
             if cached_emails:
-                self._log_info(f"⚡ 从缓存快速获取 {len(cached_emails)} 封邮件 (响应时间 <100ms)")
+                # 移除print语句，避免MCP JSON解析错误
                 return cached_emails
         
         if not self.connected:
             return []
         
         try:
-            self._log_info(f"📡 从iCloud服务器获取最近 {count} 封邮件...")
+            # 移除print语句，避免MCP JSON解析错误
             start_time = datetime.now()
+            
+            self._log_info(f"📡 从iCloud服务器获取最近 {count} 封邮件...")
             
             # 获取所有邮件ID
             mail_ids = self.search_emails('ALL')
@@ -356,24 +361,28 @@ class iCloudConnector:
                         
                         # 添加调试信息
                         date_info = parsed_email.get('date', '无日期')[:19]
-                        self._log_info(f"✅ 解析邮件 {i}/{count}: {parsed_email.get('subject', '无主题')[:30]}... (日期: {date_info})")
+                        # 移除print语句，避免MCP JSON解析错误
+                        pass
                     else:
-                        self._log_error(f"❌ 无法获取邮件ID: {mail_id}")
+                        # 移除print语句，避免MCP JSON解析错误
+                        pass
                         
                 except Exception as e:
-                    self._log_error(f"❌ 解析邮件失败 (ID: {mail_id}): {str(e)}")
+                    # 移除print语句，避免MCP JSON解析错误
                     continue
             
             # 💾 存储到缓存以加速后续访问
             if emails and use_cache:
                 try:
                     stored_count = email_cache_manager.store_emails(emails)
-                    self._log_info(f"💾 已缓存 {stored_count} 封邮件到本地数据库")
+                    # 移除print语句，避免MCP JSON解析错误
+                    pass
                 except Exception as cache_err:
-                    self._log_error(f"❌ 缓存存储失败: {cache_err}")
+                    # 移除print语句，避免MCP JSON解析错误
+                    pass
             
             elapsed_time = (datetime.now() - start_time).total_seconds()
-            self._log_info(f"🎉 成功获取并解析 {len(emails)} 封邮件 (耗时: {elapsed_time:.2f}秒)")
+            # 移除print语句，避免MCP JSON解析错误
             return emails
             
         except Exception as e:
@@ -404,7 +413,7 @@ class iCloudConnector:
             return []
         
         try:
-            self._log_info(f"🔍 在iCloud服务器搜索: '{query}'...")
+            # 移除print语句，避免MCP JSON解析错误
             start_time = datetime.now()
             
             # 构建IMAP搜索条件
@@ -426,7 +435,7 @@ class iCloudConnector:
                     emails.append(parsed_email)
             
             elapsed_time = (datetime.now() - start_time).total_seconds()
-            self._log_info(f"✅ 搜索完成，找到 {len(emails)} 个结果 (耗时: {elapsed_time:.2f}秒)")
+            # 移除print语句，避免MCP JSON解析错误
             
             return emails
             
@@ -554,13 +563,14 @@ class iCloudConnector:
             return date_str.strip() if date_str else None
     
     def _log_error(self, error_msg: str) -> None:
-        """记录错误信息"""
-        # 可以扩展为更复杂的日志记录
-        print(f"[iCloud错误] {error_msg}")
-    
+        """记录错误信息（静默模式，避免MCP JSON解析错误）"""
+        # 移除print输出，避免干扰MCP协议
+        pass
+        
     def _log_info(self, info_msg: str) -> None:
-        """记录信息"""
-        print(f"[iCloud信息] {info_msg}")
+        """记录信息（静默模式，避免MCP JSON解析错误）"""
+        # 移除print输出，避免干扰MCP协议
+        pass
     
     def __enter__(self):
         """上下文管理器入口"""
