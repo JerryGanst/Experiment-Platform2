@@ -30,8 +30,8 @@ class iCloudConnector:
             email_address: iCloud邮箱地址（可选，默认使用Jerry的邮箱）
             password: 应用专用密码（可选，默认使用预设密码）
         """
-        self.EMAIL = email_address or "jerrywsx@icloud.com"
-        self.PASSWORD = password or "fsil-npvx-rbdo-vman"  # 应用专用密码
+        self.EMAIL = email_address or "your_email@icloud.com"
+        self.PASSWORD = password or "your-app-password"  # 应用专用密码
         self.IMAP_SERVER = "imap.mail.me.com"
         self.IMAP_PORT = 993
         self.mail = None

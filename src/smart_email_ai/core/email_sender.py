@@ -31,8 +31,8 @@ class EmailSender:
         """
         if use_default:
             # 使用默认配置，对缺失的参数使用默认值
-            self.email_address = email_address or "jerrywsx@icloud.com"
-            self.password = password or "fsil-npvx-rbdo-vman"  # 应用专用密码
+            self.email_address = email_address or "your_email@icloud.com"
+            self.password = password or "your-app-password"  # 应用专用密码
         else:
             # 使用自定义配置时，必须提供完整参数
             if not email_address or not password:
