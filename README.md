@@ -575,7 +575,7 @@ smart_email_ai/
 - **缓存同步**: 基于UTC+8时区的时间戳
 
 ### 邮件发送配置
-- **默认发件人**: jerrywsx@icloud.com
+- **默认发件人**: your_email@icloud.com
 - **支持服务商**: iCloud, Gmail, Outlook
 - **安全连接**: SSL/TLS加密传输
 
