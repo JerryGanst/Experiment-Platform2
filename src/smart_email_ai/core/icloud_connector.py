@@ -24,18 +24,23 @@ class iCloudConnector:
     """iCloud邮箱连接器"""
     
     def __init__(self, email_address: str = None, password: str = None):
-        """初始化iCloud连接器
+        """
+        初始化iCloud连接器
         
         Args:
-            email_address: iCloud邮箱地址（可选，默认使用Jerry的邮箱）
-            password: 应用专用密码（可选，默认使用预设密码）
+            email_address: iCloud邮箱地址（必须提供）
+            password: 应用专用密码（必须提供）
         """
-        self.EMAIL = email_address or "your_email@icloud.com"
-        self.PASSWORD = password or "your-app-password"  # 应用专用密码
+        if not email_address or not password:
+            raise ValueError("必须提供邮箱地址和应用专用密码")
+            
+        self.EMAIL = email_address
+        self.PASSWORD = password
         self.IMAP_SERVER = "imap.mail.me.com"
         self.IMAP_PORT = 993
-        self.mail = None
         self.connected = False
+        self.mail = None
+        self.last_error = None
         self.email_cache = {}  # 简单的邮件缓存
         
     def connect(self) -> bool:

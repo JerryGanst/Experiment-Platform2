@@ -21,24 +21,34 @@ from pathlib import Path
 class EmailSender:
     """邮件发送器 - 支持多种邮件服务器和动态发件人配置"""
     
-    def __init__(self, email_address: str = None, password: str = None, use_default: bool = True):
-        """初始化邮件发送器
+    def __init__(self, email_address: str = None, password: str = None, provider: str = None, use_default: bool = False):
+        """
+        初始化邮件发送器
         
         Args:
             email_address: 发件人邮箱地址
-            password: 邮箱密码或应用专用密码
-            use_default: 是否使用默认配置（Jerry的iCloud）
+            password: 邮箱密码或应用专用密码  
+            provider: 邮件服务提供商 ('icloud', 'gmail', 'outlook')
+            use_default: 是否使用默认配置（已废弃，为兼容性保留）
         """
-        if use_default:
-            # 使用默认配置，对缺失的参数使用默认值
-            self.email_address = email_address or "your_email@icloud.com"
-            self.password = password or "your-app-password"  # 应用专用密码
-        else:
-            # 使用自定义配置时，必须提供完整参数
-            if not email_address or not password:
-                raise ValueError("使用自定义配置时，必须提供email_address和password")
-            self.email_address = email_address
-            self.password = password
+        # 验证必要参数
+        if not email_address or not password:
+            raise ValueError("必须提供邮箱地址和密码")
+            
+        self.email_address = email_address
+        self.password = password
+        
+        # 自动检测邮件服务商
+        if not provider:
+            provider = self._detect_provider(email_address)
+        
+        self.provider = provider
+        
+        # 验证支持的服务商
+        if provider not in self.smtp_config:
+            raise ValueError(f"不支持的邮件服务商: {provider}")
+        
+        self.server_config = self.smtp_config[provider]
         
         # iCloud SMTP 配置
         self.smtp_config = {

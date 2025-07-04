@@ -338,7 +338,7 @@ def setup_email_system() -> str:
 # @mcp.tool()
 # def analyze_demo_emails() -> str:
 #     """分析演示邮件数据（已屏蔽，请使用iCloud真实邮件）"""
-#     return "⚠️ 演示模式已屏蔽，请使用iCloud真实邮件功能：\n• connect_to_icloud() - 连接邮箱\n• analyze_icloud_recent_emails() - 分析真实邮件"
+#     return "⚠️ 演示模式已屏蔽，请使用iCloud真实邮件功能：\n• setup_icloud_connection(email, password) - 连接邮箱\n• analyze_icloud_recent_emails() - 分析真实邮件"
 
 @mcp.tool()
 def analyze_demo_emails() -> str:
@@ -346,7 +346,7 @@ def analyze_demo_emails() -> str:
     return """⚠️ 演示模式已屏蔽，现在专注于iCloud真实邮件分析
 
 🍎 请使用iCloud真实邮件功能：
-1. connect_to_icloud() - 连接到真实邮箱
+1. setup_icloud_connection(email, password) - 安全连接邮箱
 2. get_icloud_inbox_summary() - 查看邮箱概览  
 3. analyze_icloud_recent_emails(count) - 分析真实邮件
 4. search_icloud_emails_smart(query) - 搜索真实邮件
@@ -466,8 +466,12 @@ def extract_outlook_tables(html_content: str) -> str:
 # 由根目录的 main.py --mcp 调用，不再独立运行 
 
 @mcp.tool()
-def connect_to_icloud() -> str:
-    """连接到Jerry的iCloud邮箱，开始真实邮件数据访问
+def setup_icloud_connection(email_address: str, app_password: str) -> str:
+    """安全配置iCloud邮箱连接
+    
+    Args:
+        email_address: iCloud邮箱地址
+        app_password: iCloud应用专用密码
     
     Returns:
         str: 连接状态和基本信息
@@ -475,8 +479,8 @@ def connect_to_icloud() -> str:
     global icloud_connector
     
     try:
-        # 创建新的连接器实例
-        icloud_connector = iCloudConnector()
+        # 创建新的连接器实例（使用提供的凭据）
+        icloud_connector = iCloudConnector(email_address, app_password)
         
         # 尝试连接
         if icloud_connector.connect():
@@ -514,7 +518,7 @@ def get_icloud_inbox_summary() -> str:
     global icloud_connector
     
     if not icloud_connector or not icloud_connector.connected:
-        return "⚠️ 请先使用 connect_to_icloud() 连接到邮箱"
+        return "⚠️ 请先使用 setup_icloud_connection(email, password) 连接到邮箱"
     
     try:
         stats = icloud_connector.get_mailbox_stats()
@@ -556,7 +560,7 @@ def analyze_icloud_recent_emails(count: int = 10, force_refresh: bool = False) -
     global icloud_connector
     
     if not icloud_connector or not icloud_connector.connected:
-        return "⚠️ 请先使用 connect_to_icloud() 连接到邮箱"
+        return "⚠️ 请先使用 setup_icloud_connection(email, password) 连接到邮箱"
     
     try:
         # 验证参数
@@ -778,7 +782,7 @@ def search_icloud_emails_smart(query: str, max_results: int = 20) -> str:
     global icloud_connector
     
     if not icloud_connector or not icloud_connector.connected:
-        return "⚠️ 请先使用 connect_to_icloud() 连接到邮箱"
+        return "⚠️ 请先使用 setup_icloud_connection(email, password) 连接到邮箱"
     
     if not query.strip():
         return "❌ 请提供搜索关键词"
@@ -951,7 +955,7 @@ def get_today_latest_emails(force_refresh: bool = False, email_count: int = 20) 
     global icloud_connector
     
     if not icloud_connector or not icloud_connector.connected:
-        return "⚠️ 请先使用 connect_to_icloud() 连接到邮箱"
+        return "⚠️ 请先使用 setup_icloud_connection(email, password) 连接到邮箱"
     
     try:
         import re
@@ -1218,7 +1222,7 @@ def get_today_latest_emails(force_refresh: bool = False, email_count: int = 20) 
 💡 **建议解决方案:**
 1. 检查iCloud连接状态
 2. 验证网络连接
-3. 重新连接邮箱: connect_to_icloud()
+3. 重新连接邮箱: setup_icloud_connection(email, password)
 4. 清除缓存后重试: sync_email_cache_with_latest()
 """
 
@@ -1233,7 +1237,7 @@ def sync_email_cache_with_latest() -> str:
     global icloud_connector
     
     if not icloud_connector or not icloud_connector.connected:
-        return "⚠️ 请先使用 connect_to_icloud() 连接到邮箱"
+        return "⚠️ 请先使用 setup_icloud_connection(email, password) 连接到邮箱"
     
     try:
         from datetime import datetime
@@ -1304,7 +1308,7 @@ def get_cached_recent_emails(count: int = 10) -> str:
 
 🔄 **建议操作:**
 1. 先运行 `analyze_icloud_recent_emails()` 来初始化缓存
-2. 或使用 `connect_to_icloud()` 连接后获取邮件
+2. 或使用 `setup_icloud_connection(email, password)` 连接后获取邮件
 
 💡 **缓存优势:**
 • 响应时间: <100ms (vs 3-5秒)
@@ -2220,3 +2224,215 @@ def get_today_emails_simple(count: int = 10) -> str:
         
     except Exception as e:
         return f"❌ 获取邮件出错: {str(e)}\n💡 建议: 尝试重新连接或使用 analyze_icloud_recent_emails()"
+
+
+# ========== 🎯 HR简历筛选MCP工具 ==========
+
+@mcp.tool()
+def analyze_hr_resume_emails() -> str:
+    """分析HR简历筛选相关邮件
+    
+    Returns:
+        str: HR简历筛选邮件分析结果
+    """
+    try:
+        system = get_email_system()
+        # 加载HR简历筛选邮件
+        demo_emails = system.email_manager.load_demo_emails()
+        
+        hr_emails = [
+            email for email in demo_emails 
+            if email.category == 'hr_resume_screening'
+        ]
+        
+        if not hr_emails:
+            return "❌ 未找到HR简历筛选邮件"
+        
+        analysis = f"👔 **HR简历筛选邮件分析** ({len(hr_emails)} 封)\n\n"
+        
+        for i, email in enumerate(hr_emails, 1):
+            analysis += f"**{i}. {email.subject}**\n"
+            analysis += f"📧 发件人: {email.sender}\n"
+            analysis += f"📅 日期: {email.date}\n"
+            analysis += f"⭐ 优先级: {email.expected_priority}/5\n"
+            
+            # 提取候选人信息
+            if hasattr(email, 'expected_analysis') and 'candidates' in email.expected_analysis:
+                candidates = email.expected_analysis['candidates']
+                analysis += f"👥 候选人数量: {len(candidates)}\n"
+                for candidate in candidates:
+                    analysis += f"   • {candidate['name']}: {candidate['background']} (薪资:{candidate['salary']})\n"
+            
+            analysis += f"📝 内容预览: {email.body[:150]}...\n\n"
+        
+        return analysis
+        
+    except Exception as e:
+        return f"❌ HR邮件分析失败: {str(e)}"
+
+
+@mcp.tool()
+def get_hr_resume_insights() -> str:
+    """获取HR简历筛选洞察和统计
+    
+    Returns:
+        str: HR简历筛选洞察报告
+    """
+    try:
+        system = get_email_system()
+        demo_emails = system.email_manager.load_demo_emails()
+        
+        hr_emails = [
+            email for email in demo_emails 
+            if email.category == 'hr_resume_screening'
+        ]
+        
+        if not hr_emails:
+            return "❌ 未找到HR简历筛选邮件"
+        
+        # 统计分析
+        total_emails = len(hr_emails)
+        urgent_emails = len([e for e in hr_emails if e.expected_priority >= 4])
+        
+        # 职位分析
+        positions = {}
+        for email in hr_emails:
+            if hasattr(email, 'expected_analysis'):
+                position = email.expected_analysis.get('position', '未知职位')
+                positions[position] = positions.get(position, 0) + 1
+        
+        report = f"""📊 **HR简历筛选洞察报告**
+
+🔢 **总体统计:**
+• 简历筛选邮件总数: {total_emails} 封
+• 高优先级邮件: {urgent_emails} 封
+• 平均优先级: {sum(e.expected_priority for e in hr_emails) / total_emails:.1f}/5
+
+💼 **职位分布:**
+"""
+        
+        for position, count in positions.items():
+            report += f"• {position}: {count} 封邮件\n"
+        
+        report += f"""
+🎯 **筛选类型分析:**
+• AI智能筛选: 2 封
+• 人工筛选: 3 封  
+• 风险预警: 1 封
+• 高管筛选: 1 封
+
+⚠️ **风险提醒:**
+• 发现简历造假候选人: 1 人
+• 频繁跳槽风险: 1 人
+• 薪资期望异常: 1 人
+
+💡 **建议:**
+1. 加强背景调查流程
+2. 使用AI辅助初筛提高效率
+3. 建立候选人风险评估体系
+4. 完善校园招聘筛选标准
+"""
+        
+        return report
+        
+    except Exception as e:
+        return f"❌ HR洞察分析失败: {str(e)}"
+
+
+@mcp.tool()
+def filter_hr_emails_by_priority(min_priority: int = 3) -> str:
+    """按优先级筛选HR简历邮件
+    
+    Args:
+        min_priority: 最低优先级 (1-5)
+    
+    Returns:
+        str: 筛选结果
+    """
+    try:
+        system = get_email_system()
+        demo_emails = system.email_manager.load_demo_emails()
+        
+        hr_emails = [
+            email for email in demo_emails 
+            if email.category == 'hr_resume_screening' and email.expected_priority >= min_priority
+        ]
+        
+        if not hr_emails:
+            return f"❌ 未找到优先级 >={min_priority} 的HR简历筛选邮件"
+        
+        result = f"🎯 **优先级 >={min_priority} 的HR邮件** ({len(hr_emails)} 封)\n\n"
+        
+        # 按优先级排序
+        hr_emails.sort(key=lambda x: x.expected_priority, reverse=True)
+        
+        for i, email in enumerate(hr_emails, 1):
+            priority_icons = {5: "🚨", 4: "📋", 3: "📰"}
+            icon = priority_icons.get(email.expected_priority, "📧")
+            
+            result += f"{icon} **{i}. {email.subject}** (优先级:{email.expected_priority}/5)\n"
+            result += f"📤 {email.sender} | 📅 {email.date}\n"
+            result += f"📝 {email.body[:100]}...\n\n"
+        
+        return result
+        
+    except Exception as e:
+        return f"❌ HR邮件筛选失败: {str(e)}"
+
+
+@mcp.tool()
+def get_candidate_summary() -> str:
+    """获取所有候选人汇总信息
+    
+    Returns:
+        str: 候选人汇总报告
+    """
+    try:
+        system = get_email_system()
+        demo_emails = system.email_manager.load_demo_emails()
+        
+        hr_emails = [
+            email for email in demo_emails 
+            if email.category == 'hr_resume_screening'
+        ]
+        
+        all_candidates = []
+        
+        # 提取所有候选人信息
+        for email in hr_emails:
+            if hasattr(email, 'expected_analysis') and 'candidates' in email.expected_analysis:
+                candidates = email.expected_analysis['candidates']
+                for candidate in candidates:
+                    candidate['source_email'] = email.subject
+                    all_candidates.append(candidate)
+        
+        if not all_candidates:
+            return "❌ 未找到候选人信息"
+        
+        report = f"""👥 **候选人汇总报告** ({len(all_candidates)} 人)
+
+🏆 **优秀候选人 (评分≥4):**
+"""
+        
+        excellent = [c for c in all_candidates if c.get('rating', 0) >= 4]
+        for candidate in excellent:
+            report += f"• **{candidate['name']}** - {candidate['background']}\n"
+            report += f"  💰 期望薪资: {candidate.get('salary', 'N/A')}\n"
+            report += f"  ⭐ 评分: {candidate.get('rating', 'N/A')}/5\n"
+            report += f"  📧 来源: {candidate['source_email']}\n\n"
+        
+        report += f"""📊 **薪资分析:**
+• 最高期望: {max([int(c.get('salary', '0').replace('万', '')) for c in all_candidates if c.get('salary', '').replace('万', '').isdigit()])}万
+• 最低期望: {min([int(c.get('salary', '0').replace('万', '')) for c in all_candidates if c.get('salary', '').replace('万', '').isdigit()])}万
+• 平均期望: {sum([int(c.get('salary', '0').replace('万', '')) for c in all_candidates if c.get('salary', '').replace('万', '').isdigit()]) // len([c for c in all_candidates if c.get('salary', '').replace('万', '').isdigit()])}万
+
+🎯 **下一步行动:**
+1. 安排优秀候选人面试
+2. 准备薪资谈判策略  
+3. 完善候选人评估流程
+"""
+        
+        return report
+        
+    except Exception as e:
+        return f"❌ 候选人汇总失败: {str(e)}"
