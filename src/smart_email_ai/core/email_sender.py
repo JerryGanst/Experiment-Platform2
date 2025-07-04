@@ -44,12 +44,6 @@ class EmailSender:
         
         self.provider = provider
         
-        # 验证支持的服务商
-        if provider not in self.smtp_config:
-            raise ValueError(f"不支持的邮件服务商: {provider}")
-        
-        self.server_config = self.smtp_config[provider]
-        
         # iCloud SMTP 配置
         self.smtp_config = {
             'icloud': {
@@ -69,8 +63,13 @@ class EmailSender:
             }
         }
         
+        # 验证支持的服务商
+        if provider not in self.smtp_config:
+            raise ValueError(f"不支持的邮件服务商: {provider}")
+        
         # 检测邮箱类型
         self.provider = self._detect_email_provider()
+        self.server_config = self.smtp_config.get(self.provider, self.smtp_config['icloud'])
         self.connected = False
         
     def _detect_email_provider(self) -> str:
@@ -412,7 +411,7 @@ Smart Email AI 分析报告
     
     @classmethod
     def create_default_sender(cls) -> 'EmailSender':
-        """创建默认发件人实例（Jerry的iCloud）
+        """创建默认发件人实例（User的iCloud）
         
         Returns:
             EmailSender: 使用默认配置的邮件发送器实例
@@ -420,5 +419,6 @@ Smart Email AI 分析报告
         return cls(use_default=True)
 
 
-# 全局邮件发送器实例
-email_sender = EmailSender() 
+# 全局邮件发送器实例（需要配置邮箱凭证后才能使用）
+# email_sender = EmailSender()  # 需要邮箱凭证
+email_sender = None  # 延迟初始化，避免启动时需要凭证 

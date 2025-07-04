@@ -7,7 +7,7 @@ Smart Email AI 是一个专为Claude Desktop设计的MCP（Model Context Protoco
 ## ✨ 核心特性
 
 ### 🍎 **iCloud真实邮件集成** (NEW!)
-- **实时邮件访问**: 直接连接用户的iCloud邮箱 (your_email@icloud.com)
+- **实时邮件访问**: 直接连接用户的iCloud邮箱 (user@example.com)
 - **安全SSL连接**: 使用SSL/TLS加密和应用专用密码
 - **智能邮件分析**: AI驱动的邮件内容理解和洞察
 - **多维度搜索**: 支持主题、发件人、正文内容搜索
@@ -42,10 +42,10 @@ pip install -r requirements.txt
     "smart-email-ai": {
       "command": "python",
       "args": [
-        "/Users/jerryganst/smart_email_ai/main.py",
+        "/Users/user/smart_email_ai/main.py",
         "--mcp"
       ],
-      "cwd": "/Users/jerryganst/smart_email_ai"
+      "cwd": "/Users/user/smart_email_ai"
     }
   }
 }

@@ -10,7 +10,7 @@
         "expected_priority": 5
       },
       "content": {
-        "body": "Hi Jerry,\n\nI hope this email finds you well. Unfortunately, I have some urgent news regarding our Q2 client presentation.\n\nThe client has requested to move our presentation from Friday to TOMORROW (Thursday) at 2:00 PM. This is extremely critical for closing the deal worth $2.5M.\n\nACTION REQUIRED:\n- Please review the updated slides (attached) and provide feedback by 6 PM today\n- Confirm your availability for tomorrow's presentation\n- Prepare the financial projections section you're responsible for\n\nThis is a make-or-break moment for our team. I know it's short notice, but your expertise is crucial for this presentation.\n\nPlease reply ASAP to confirm you can make it work.\n\nBest regards,\nSarah Chen\nDirector of Sales",
+        "body": "Hi User,\n\nI hope this email finds you well. Unfortunately, I have some urgent news regarding our Q2 client presentation.\n\nThe client has requested to move our presentation from Friday to TOMORROW (Thursday) at 2:00 PM. This is extremely critical for closing the deal worth $2.5M.\n\nACTION REQUIRED:\n- Please review the updated slides (attached) and provide feedback by 6 PM today\n- Confirm your availability for tomorrow's presentation\n- Prepare the financial projections section you're responsible for\n\nThis is a make-or-break moment for our team. I know it's short notice, but your expertise is crucial for this presentation.\n\nPlease reply ASAP to confirm you can make it work.\n\nBest regards,\nSarah Chen\nDirector of Sales",
         "expected_analysis": {
           "action_items": ["review slides", "confirm availability", "prepare financial projections"],
           "deadline": "today 6 PM",
@@ -48,7 +48,7 @@
         "expected_priority": 3
       },
       "content": {
-        "body": "Dear Jerry,\n\nI hope you're having a great week! I wanted to follow up on our conversation at the conference last month about potential collaboration opportunities.\n\nOur companies seem perfectly aligned, and I believe we could create something amazing together. I've attached a partnership proposal that outlines:\n\n• Joint marketing initiatives that could increase both our market reach by 40%\n• Shared technology resources and expertise\n• Co-development of new products for Q4 2025\n\nI'm really excited about the possibilities here. Would you be available for a call next week to discuss this further? I'm flexible with timing and can accommodate your schedule.\n\nLooking forward to your thoughts and hopefully a positive response!\n\nWarm regards,\nJohn Williams\nVP of Business Development\nPartner Company Inc.",
+        "body": "Dear User,\n\nI hope you're having a great week! I wanted to follow up on our conversation at the conference last month about potential collaboration opportunities.\n\nOur companies seem perfectly aligned, and I believe we could create something amazing together. I've attached a partnership proposal that outlines:\n\n• Joint marketing initiatives that could increase both our market reach by 40%\n• Shared technology resources and expertise\n• Co-development of new products for Q4 2025\n\nI'm really excited about the possibilities here. Would you be available for a call next week to discuss this further? I'm flexible with timing and can accommodate your schedule.\n\nLooking forward to your thoughts and hopefully a positive response!\n\nWarm regards,\nJohn Williams\nVP of Business Development\nPartner Company Inc.",
         "expected_analysis": {
           "action_items": ["review partnership proposal", "schedule call"],
           "deadline": "next week",
@@ -105,7 +105,7 @@
         "expected_priority": 5
       },
       "content": {
-        "body": "Jerry,\n\nEmergency board meeting tomorrow 9 AM. I need you to complete the Q2 Financial Development Report immediately.\n\nACTION REQUIRED - Complete by 5:00 PM TODAY:\n\n• Create Q2 vs Q1 revenue comparison chart with $8.2M total revenue data\n• Analyze development budget performance showing $1.8M spend (15% increase)\n• Generate ROI analysis for all active projects using attached financial data\n• Prepare cash flow projection for Q3 based on current +$2.1M surplus\n• Write executive summary highlighting 18.5% operating margin improvement\n\nSPECIFIC DELIVERABLES:\n1. Complete financial report in Excel format\n2. PowerPoint presentation with 8 key slides\n3. Executive summary document (2 pages maximum)\n\nPlease use our standard financial template from SharePoint and include these metrics:\n- R&D allocation: $950K for AI project development\n- Marketing ROI: 3.2x return on $600K investment\n- Q3 budget recommendations for $12M allocation\n\nPlease confirm you can deliver this by 5 PM and send progress updates every 2 hours.\n\nThis is critical - CEO requested your analysis specifically for tomorrow's $12M budget decision.\n\nDavid Liu\nCFO & Finance Director\nPhone: +1-555-0198",
+        "body": "User,\n\nEmergency board meeting tomorrow 9 AM. I need you to complete the Q2 Financial Development Report immediately.\n\nACTION REQUIRED - Complete by 5:00 PM TODAY:\n\n• Create Q2 vs Q1 revenue comparison chart with $8.2M total revenue data\n• Analyze development budget performance showing $1.8M spend (15% increase)\n• Generate ROI analysis for all active projects using attached financial data\n• Prepare cash flow projection for Q3 based on current +$2.1M surplus\n• Write executive summary highlighting 18.5% operating margin improvement\n\nSPECIFIC DELIVERABLES:\n1. Complete financial report in Excel format\n2. PowerPoint presentation with 8 key slides\n3. Executive summary document (2 pages maximum)\n\nPlease use our standard financial template from SharePoint and include these metrics:\n- R&D allocation: $950K for AI project development\n- Marketing ROI: 3.2x return on $600K investment\n- Q3 budget recommendations for $12M allocation\n\nPlease confirm you can deliver this by 5 PM and send progress updates every 2 hours.\n\nThis is critical - CEO requested your analysis specifically for tomorrow's $12M budget decision.\n\nDavid Liu\nCFO & Finance Director\nPhone: +1-555-0198",
         "expected_analysis": {
           "action_items": ["create revenue comparison", "analyze budget performance", "generate ROI analysis", "prepare cash flow projection", "write executive summary"],
           "deadline": "5 PM today",
@@ -124,7 +124,7 @@
         "expected_priority": 4
       },
       "content": {
-        "body": "我们发现您的 Google 账号 (jerryganst666@gmail.com) 在一部 Mac 设备上有新的登录活动。\n如果这是您本人的操作，则无需采取任何行动。\n如果这不是您本人的操作，我们会帮助您保护您的账号。\n\n查看活动\n您也可以访问以下网址查看安全性活动：\nhttps://myaccount.google.com/notifications",
+        "body": "我们发现您的 Google 账号 (user@example.com) 在一部 Mac 设备上有新的登录活动。\n如果这是您本人的操作，则无需采取任何行动。\n如果这不是您本人的操作，我们会帮助您保护您的账号。\n\n查看活动\n您也可以访问以下网址查看安全性活动：\nhttps://myaccount.google.com/notifications",
         "expected_analysis": {
           "action_items": ["check recent activity"],
           "deadline": null,
@@ -143,7 +143,7 @@
         "expected_priority": 4
       },
       "content": {
-        "body": "\"Claude for Google Drive\"已获得对您的 Google 账号的访问权限 (jerryganst666@gmail.com)。\n如果您并未授予访问权限，则应检查此活动，并确保您的账号安全。\n\n查看活动\n您也可以访问以下网址查看安全性活动：\nhttps://myaccount.google.com/notifications",
+        "body": "\"Claude for Google Drive\"已获得对您的 Google 账号的访问权限 (user@example.com)。\n如果您并未授予访问权限，则应检查此活动，并确保您的账号安全。\n\n查看活动\n您也可以访问以下网址查看安全性活动：\nhttps://myaccount.google.com/notifications",
         "expected_analysis": {
           "action_items": ["review app permissions"],
           "deadline": null,
@@ -162,7 +162,7 @@
         "expected_priority": 4
       },
       "content": {
-        "body": "我们发现您的 Google 账号 (jerryganst666@gmail.com) 在一部 Android 设备上有新的登录活动。\n如果这是您本人的操作，则无需采取任何行动。\n如果这不是您本人的操作，我们会帮助您保护您的账号。\n\n查看活动\n您也可以访问以下网址查看安全性活动：\nhttps://myaccount.google.com/notifications",
+        "body": "我们发现您的 Google 账号 (user@example.com) 在一部 Android 设备上有新的登录活动。\n如果这是您本人的操作，则无需采取任何行动。\n如果这不是您本人的操作，我们会帮助您保护您的账号。\n\n查看活动\n您也可以访问以下网址查看安全性活动：\nhttps://myaccount.google.com/notifications",
         "expected_analysis": {
           "action_items": ["check recent activity"],
           "deadline": null,
@@ -223,7 +223,7 @@
         "expected_priority": 5
       },
       "content": {
-        "body": "Jerry，您好！\n\n我们收到了一批应聘高级AI工程师职位的简历，需要您作为技术专家进行初步筛选。这个职位非常关键，CEO要求24小时内完成初筛。\n\n职位要求：\n• Python/TensorFlow/PyTorch专家级经验 (3年+)\n• 大模型训练和部署经验\n• 分布式系统架构能力\n• 年薪范围：60-80万\n\n候选人简历摘要：\n\n1. 张明 - 前百度AI研究员\n   - 5年深度学习经验，主导过BERT模型优化项目\n   - 发表顶级会议论文8篇（NIPS, ICML）\n   - 熟练掌握TensorFlow/PyTorch，有大规模模型训练经验\n   - 期望薪资：70万\n   - 评估：★★★★★ 强烈推荐\n\n2. 李佳 - 腾讯高级算法工程师\n   - 4年机器学习经验，负责推荐系统优化\n   - 精通Python/Scala，有Spark大数据处理经验\n   - 参与过千万级用户推荐系统设计\n   - 期望薪资：65万\n   - 评估：★★★★☆ 推荐面试\n\n3. 王强 - 创业公司CTO\n   - 6年全栈开发经验，2年AI项目管理经验\n   - 技术栈偏向工程实现，AI理论基础一般\n   - 有团队管理经验，但缺乏大厂背景\n   - 期望薪资：75万\n   - 评估：★★★☆☆ 需要详细技术面试\n\n请您：\n1. 评估候选人技术匹配度（1-10分）\n2. 排出面试优先级\n3. 提出具体技术问题建议\n4. 今天下午5点前反馈结果\n\n这个项目关系到公司AI战略布局，您的专业意见非常重要！\n\n谢谢！\n\nLisa Wang\nHR Business Partner\n技术招聘专家",
+        "body": "User，您好！\n\n我们收到了一批应聘高级AI工程师职位的简历，需要您作为技术专家进行初步筛选。这个职位非常关键，CEO要求24小时内完成初筛。\n\n职位要求：\n• Python/TensorFlow/PyTorch专家级经验 (3年+)\n• 大模型训练和部署经验\n• 分布式系统架构能力\n• 年薪范围：60-80万\n\n候选人简历摘要：\n\n1. 张明 - 前百度AI研究员\n   - 5年深度学习经验，主导过BERT模型优化项目\n   - 发表顶级会议论文8篇（NIPS, ICML）\n   - 熟练掌握TensorFlow/PyTorch，有大规模模型训练经验\n   - 期望薪资：70万\n   - 评估：★★★★★ 强烈推荐\n\n2. 李佳 - 腾讯高级算法工程师\n   - 4年机器学习经验，负责推荐系统优化\n   - 精通Python/Scala，有Spark大数据处理经验\n   - 参与过千万级用户推荐系统设计\n   - 期望薪资：65万\n   - 评估：★★★★☆ 推荐面试\n\n3. 王强 - 创业公司CTO\n   - 6年全栈开发经验，2年AI项目管理经验\n   - 技术栈偏向工程实现，AI理论基础一般\n   - 有团队管理经验，但缺乏大厂背景\n   - 期望薪资：75万\n   - 评估：★★★☆☆ 需要详细技术面试\n\n请您：\n1. 评估候选人技术匹配度（1-10分）\n2. 排出面试优先级\n3. 提出具体技术问题建议\n4. 今天下午5点前反馈结果\n\n这个项目关系到公司AI战略布局，您的专业意见非常重要！\n\n谢谢！\n\nLisa Wang\nHR Business Partner\n技术招聘专家",
         "expected_analysis": {
           "action_items": ["评估候选人技术匹配度", "排出面试优先级", "提出技术问题建议", "下午5点前反馈"],
           "deadline": "今天下午5点",

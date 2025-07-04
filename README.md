@@ -249,7 +249,7 @@ search_emails_fts('(Apple OR Google) AND 重要', 15)
 ### iCloud连接配置
 ```yaml
 icloud_settings:
-  email: "your@icloud.com"
+  email: "user@example.com"
   password: "your-app-specific-password"  # 使用应用专用密码
   server: "imap.mail.me.com"
   port: 993
@@ -276,7 +276,7 @@ email_sender:
   smtp_server: "smtp.mail.me.com"
   smtp_port: 587
   use_tls: true
-  from_email: "your@icloud.com"
+  from_email: "user@example.com"
   from_password: "your-app-specific-password"
 ```
 
@@ -575,7 +575,7 @@ smart_email_ai/
 - **缓存同步**: 基于UTC+8时区的时间戳
 
 ### 邮件发送配置
-- **默认发件人**: your_email@icloud.com
+- **默认发件人**: user@example.com
 - **支持服务商**: iCloud, Gmail, Outlook
 - **安全连接**: SSL/TLS加密传输
 

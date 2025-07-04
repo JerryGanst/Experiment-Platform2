@@ -28,3 +28,5 @@ logs/
 ~/
 tmp/
 interactive-feedback-mcp/
+.privacy_backup/
+data/email_cache.db

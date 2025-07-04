@@ -822,7 +822,7 @@ DEMO_EMAILS_ADVANCED = [
         "sender": "sarah.chen@company.com",
         "subject": "URGENT: Client presentation moved to tomorrow - Need your input ASAP",
         "date": "2025-06-03 09:15:00",
-        "body": """Hi Jerry,
+        "body": """Hi User,
 
 I hope this email finds you well. Unfortunately, I have some urgent news regarding our Q2 client presentation.
 
@@ -868,7 +868,7 @@ Company IT Security"""
         "sender": "john.williams@partner-company.com",
         "subject": "Partnership proposal - Excited to collaborate!",
         "date": "2025-06-03 14:30:00",
-        "body": """Dear Jerry,
+        "body": """Dear User,
 
 I hope you're having a great week! I wanted to follow up on our conversation at the conference last month about potential collaboration opportunities.
 
@@ -949,7 +949,7 @@ Unsubscribe
         "sender": "david.liu@finance.company.com",
         "subject": "URGENT: Complete Q2 Financial Development Report by 5PM - Board Meeting Tomorrow",
         "date": "2025-06-03 13:45:00",
-        "body": """Jerry,
+        "body": """User,
 
 Emergency board meeting tomorrow 9 AM. I need you to complete the Q2 Financial Development Report immediately.
 
@@ -983,19 +983,19 @@ Phone: +1-555-0198"""
         "sender": "no-reply@accounts.google.com",
         "subject": "安全提醒：在 Mac 设备上有新的登录活动",
         "date": "2025-06-11 09:30:00",
-        "body": """我们发现您的 Google 账号 (jerryganst666@gmail.com) 在一部 Mac 设备上有新的登录活动。\n如果这是您本人的操作，则无需采取任何行动。\n如果这不是您本人的操作，我们会帮助您保护您的账号。\n\n查看活动\n您也可以访问以下网址查看安全性活动：\nhttps://myaccount.google.com/notifications"""
+        "body": """我们发现您的 Google 账号 (user@example.com) 在一部 Mac 设备上有新的登录活动。\n如果这是您本人的操作，则无需采取任何行动。\n如果这不是您本人的操作，我们会帮助您保护您的账号。\n\n查看活动\n您也可以访问以下网址查看安全性活动：\nhttps://myaccount.google.com/notifications"""
     },
     {
         "sender": "no-reply@accounts.google.com",
         "subject": "安全提醒：\"Claude for Google Drive\" 已获得对您的 Google 账号的访问权限",
         "date": "2025-06-11 09:31:00",
-        "body": """"Claude for Google Drive"已获得对您的 Google 账号的访问权限 (jerryganst666@gmail.com)。\n如果您并未授予访问权限，则应检查此活动，并确保您的账号安全。\n\n查看活动\n您也可以访问以下网址查看安全性活动：\nhttps://myaccount.google.com/notifications"""
+        "body": """"Claude for Google Drive"已获得对您的 Google 账号的访问权限 (user@example.com)。\n如果您并未授予访问权限，则应检查此活动，并确保您的账号安全。\n\n查看活动\n您也可以访问以下网址查看安全性活动：\nhttps://myaccount.google.com/notifications"""
     },
     {
         "sender": "no-reply@accounts.google.com",
         "subject": "安全提醒：在 Android 设备上有新的登录活动",
         "date": "2025-06-11 14:37:00",
-        "body": """我们发现您的 Google 账号 (jerryganst666@gmail.com) 在一部 Android 设备上有新的登录活动。\n如果这是您本人的操作，则无需采取任何行动。\n如果这不是您本人的操作，我们会帮助您保护您的账号。\n\n查看活动\n您也可以访问以下网址查看安全性活动：\nhttps://myaccount.google.com/notifications"""
+        "body": """我们发现您的 Google 账号 (user@example.com) 在一部 Android 设备上有新的登录活动。\n如果这是您本人的操作，则无需采取任何行动。\n如果这不是您本人的操作，我们会帮助您保护您的账号。\n\n查看活动\n您也可以访问以下网址查看安全性活动：\nhttps://myaccount.google.com/notifications"""
     }
 ]
 
