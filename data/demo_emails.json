@@ -212,6 +212,220 @@
           "reply_count": 4
         }
       }
+    },
+    {
+      "id": "hr_resume_001",
+      "metadata": {
+        "sender": "lisa.wang@hr.company.com",
+        "subject": "【高优先级】紧急筛选：高级AI工程师候选人简历 - 24小时内反馈",
+        "date": "2025-06-24T09:00:00Z",
+        "category": "hr_resume_screening",
+        "expected_priority": 5
+      },
+      "content": {
+        "body": "Jerry，您好！\n\n我们收到了一批应聘高级AI工程师职位的简历，需要您作为技术专家进行初步筛选。这个职位非常关键，CEO要求24小时内完成初筛。\n\n职位要求：\n• Python/TensorFlow/PyTorch专家级经验 (3年+)\n• 大模型训练和部署经验\n• 分布式系统架构能力\n• 年薪范围：60-80万\n\n候选人简历摘要：\n\n1. 张明 - 前百度AI研究员\n   - 5年深度学习经验，主导过BERT模型优化项目\n   - 发表顶级会议论文8篇（NIPS, ICML）\n   - 熟练掌握TensorFlow/PyTorch，有大规模模型训练经验\n   - 期望薪资：70万\n   - 评估：★★★★★ 强烈推荐\n\n2. 李佳 - 腾讯高级算法工程师\n   - 4年机器学习经验，负责推荐系统优化\n   - 精通Python/Scala，有Spark大数据处理经验\n   - 参与过千万级用户推荐系统设计\n   - 期望薪资：65万\n   - 评估：★★★★☆ 推荐面试\n\n3. 王强 - 创业公司CTO\n   - 6年全栈开发经验，2年AI项目管理经验\n   - 技术栈偏向工程实现，AI理论基础一般\n   - 有团队管理经验，但缺乏大厂背景\n   - 期望薪资：75万\n   - 评估：★★★☆☆ 需要详细技术面试\n\n请您：\n1. 评估候选人技术匹配度（1-10分）\n2. 排出面试优先级\n3. 提出具体技术问题建议\n4. 今天下午5点前反馈结果\n\n这个项目关系到公司AI战略布局，您的专业意见非常重要！\n\n谢谢！\n\nLisa Wang\nHR Business Partner\n技术招聘专家",
+        "expected_analysis": {
+          "action_items": ["评估候选人技术匹配度", "排出面试优先级", "提出技术问题建议", "下午5点前反馈"],
+          "deadline": "今天下午5点",
+          "urgency_score": 0.9,
+          "sentiment": "urgent",
+          "candidates": [
+            {
+              "name": "张明",
+              "background": "前百度AI研究员",
+              "experience": "5年深度学习",
+              "highlights": ["BERT模型优化", "8篇顶会论文", "TensorFlow/PyTorch专家"],
+              "salary": "70万",
+              "rating": 5
+            },
+            {
+              "name": "李佳", 
+              "background": "腾讯高级算法工程师",
+              "experience": "4年机器学习",
+              "highlights": ["推荐系统优化", "Spark大数据", "千万级系统"],
+              "salary": "65万",
+              "rating": 4
+            },
+            {
+              "name": "王强",
+              "background": "创业公司CTO", 
+              "experience": "6年全栈+2年AI管理",
+              "highlights": ["团队管理", "工程实现", "AI理论基础一般"],
+              "salary": "75万",
+              "rating": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "hr_resume_002",
+      "metadata": {
+        "sender": "recruiting@company.com",
+        "subject": "批量简历筛选：前端开发工程师职位 - 15份简历待评估",
+        "date": "2025-06-24T10:30:00Z",
+        "category": "hr_resume_screening",
+        "expected_priority": 3
+      },
+      "content": {
+        "body": "技术团队负责人，\n\n前端开发工程师职位收到了15份简历，现需要进行技术筛选。职位信息：\n\n岗位：高级前端开发工程师\n部门：产品研发部\n薪资：35-50万\n\n技术要求：\n• React/Vue.js深度应用经验\n• TypeScript/JavaScript精通\n• 移动端适配和性能优化\n• 有大型SPA项目经验\n\n候选人快速概览：\n\n优秀候选人（5人）：\n1. 陈伟 - 阿里前端专家，React生态深度使用者\n2. 刘萍 - 字节跳动高级工程师，Vue.js技术栈\n3. 赵亮 - 美团前端架构师，性能优化专家\n4. 孙丽 - 拼多多资深工程师，移动端专家\n5. 周杰 - 滴滴技术专家，大型项目负责人\n\n中等候选人（7人）：\n• 有2-3年经验，技术栈符合但深度不足\n• 小公司背景，项目规模有限\n• 技能匹配度60-75%\n\n不推荐候选人（3人）：\n• 经验不足（1年以下）\n• 技术栈不匹配（主要后端背景）\n• 薪资期望过高（超出预算范围）\n\n建议面试安排：\n• 第一批：优秀候选人5人，安排本周技术面试\n• 第二批：中等候选人中挑选3人作为备选\n• 第三批：不推荐直接PASS\n\n详细简历已发送到您的邮箱，请查收并确认面试安排。\n\n招聘进度目标：本周完成初面，下周二面，争取月底入职。\n\nThanks,\nRecruitment Team",
+        "expected_analysis": {
+          "action_items": ["查收详细简历", "确认面试安排", "安排技术面试"],
+          "deadline": "本周",
+          "urgency_score": 0.6,
+          "sentiment": "business",
+          "position": "高级前端开发工程师",
+          "salary_range": "35-50万",
+          "candidate_summary": {
+            "excellent": 5,
+            "average": 7, 
+            "not_recommended": 3,
+            "total": 15
+          }
+        }
+      }
+    },
+    {
+      "id": "hr_resume_003",
+      "metadata": {
+        "sender": "talent@company.com",
+        "subject": "【AI助手筛选结果】数据科学家岗位候选人智能分析报告",
+        "date": "2025-06-24T14:15:00Z",
+        "category": "hr_resume_screening",
+        "expected_priority": 4
+      },
+      "content": {
+        "body": "AI简历筛选系统分析报告\n\n职位：高级数据科学家\n分析时间：2025-06-24 14:15\n候选人总数：23人\nAI评分标准：技术能力40% + 项目经验30% + 教育背景20% + 行业匹配度10%\n\n【AI推荐 - Top 3候选人】\n\n🥇 排名1：Dr. 王晓明\nAI匹配度：95.2%\n• 清华大学统计学博士，斯坦福访问学者\n• 8年数据科学经验，曾任字节跳动首席数据科学家\n• 专长：因果推断、A/B测试、用户增长分析\n• 技术栈：Python/R/SQL/Spark/Tableau完美匹配\n• 发表SCI论文12篇，H-index=15\n• 期望薪资：80万（预算内）\n• AI评语：完美匹配，强烈建议优先面试\n\n🥈 排名2：林海燕\nAI匹配度：88.7%\n• 北大数学硕士，哈佛商学院MBA\n• 6年金融数据分析 + 3年互联网数据科学\n• 专长：风控模型、机器学习、商业分析\n• 曾负责蚂蚁金服信贷风控模型优化\n• 技术栈：Python/SQL专精，Spark/TensorFlow熟练\n• 期望薪资：75万\n• AI评语：技术+商业双重背景，适合业务导向项目\n\n🥉 排名3：张伟\nAI匹配度：85.3%\n• 中科院计算机博士，MIT博士后\n• 5年学术研究 + 2年工业界经验\n• 专长：深度学习、自然语言处理、推荐系统\n• 在Google Research实习，发表NIPS/ICML论文5篇\n• 技术栈：Python/TensorFlow/PyTorch深度专家\n• 期望薪资：70万\n• AI评语：学术背景强，适合算法研究型项目\n\n【其他候选人分析】\n• 匹配度70-80%：8人（可考虑备选）\n• 匹配度50-70%：7人（技能缺口较大）\n• 匹配度<50%：5人（建议直接pass）\n\n【AI筛选洞察】\n• 高学历候选人集中在Top 10\n• 大厂背景显著提升匹配度\n• Python技能是基础门槛\n• 业务理解能力成为差异化优势\n• 薪资期望与能力高度相关\n\n建议行动：\n1. 立即邀请Top 3候选人进行技术面试\n2. 准备针对性技术问题（AI已生成问题库）\n3. 一周内完成初筛，避免优秀候选人流失\n\n详细分析报告和候选人简历已同步到招聘系统。\n\n---\nAI Talent Screening System v2.0\n准确率：93.5% | 处理时间：3.2秒",
+        "expected_analysis": {
+          "action_items": ["邀请Top 3候选人面试", "准备技术问题", "一周内完成初筛"],
+          "deadline": "一周内",
+          "urgency_score": 0.7,
+          "sentiment": "analytical",
+          "ai_screening": true,
+          "position": "高级数据科学家",
+          "total_candidates": 23,
+          "top_candidates": [
+            {
+              "name": "Dr. 王晓明",
+              "match_score": 95.2,
+              "background": "清华博士+斯坦福访问学者",
+              "experience": "8年+字节跳动首席",
+              "salary": "80万"
+            },
+            {
+              "name": "林海燕",
+              "match_score": 88.7,
+              "background": "北大硕士+哈佛MBA",
+              "experience": "9年金融+互联网",
+              "salary": "75万"
+            },
+            {
+              "name": "张伟",
+              "match_score": 85.3,
+              "background": "中科院博士+MIT博士后",
+              "experience": "7年学术+工业",
+              "salary": "70万"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "hr_resume_004",
+      "metadata": {
+        "sender": "hr.system@company.com",
+        "subject": "简历筛选异常警报：产品经理职位出现高风险候选人",
+        "date": "2025-06-24T16:45:00Z",
+        "category": "hr_resume_screening",
+        "expected_priority": 4
+      },
+      "content": {
+        "body": "HR风险预警系统自动检测报告\n\n职位：高级产品经理\n预警级别：🔴 高风险\n检测时间：2025-06-24 16:45\n\n【检测到的风险候选人】\n\n⚠️ 候选人：刘某某\n风险类型：简历造假嫌疑\n风险指数：85%\n\n具体问题：\n1. 教育背景不符\n   - 声称清华大学MBA，但学历验证失败\n   - 毕业时间与工作时间存在重叠矛盾\n\n2. 工作经历夸大\n   - 声称担任某大厂产品总监，但该公司人事否认\n   - 项目成果数据异常（声称单人负责DAU 1000万产品）\n\n3. 技能证书疑点\n   - PMP证书编号查询无结果\n   - NPDP证书照片存在PS痕迹\n\n4. 推荐人联系方式\n   - 提供的推荐人电话为空号\n   - 邮箱地址格式异常\n\n【其他需关注候选人】\n\n⚠️ 候选人：王某某\n风险类型：频繁跳槽\n• 3年内更换6份工作\n• 每份工作不超过8个月\n• 离职原因描述前后不符\n\n⚠️ 候选人：陈某某\n风险类型：薪资期望异常\n• 当前薪资20万，期望薪资80万（涨幅300%）\n• 能力与期望严重不匹配\n• 可能存在虚报当前薪资情况\n\n【系统建议】\n1. 立即暂停刘某某的面试流程\n2. 启动深度背景调查程序\n3. 其他风险候选人降低优先级\n4. 加强后续候选人背景核实\n\n【正常候选人推荐】\n系统同时识别出5名优质候选人：\n• 背景真实可信\n• 能力匹配度高\n• 稳定性良好\n• 薪资期望合理\n\n请HR团队及时处理风险预警，避免招聘风险。\n\n---\nHR Risk Detection System v3.1\n检测准确率：96.8%",
+        "expected_analysis": {
+          "action_items": ["暂停高风险候选人面试", "启动背景调查", "加强后续核实"],
+          "deadline": "立即处理",
+          "urgency_score": 0.8,
+          "sentiment": "warning",
+          "risk_detection": true,
+          "high_risk_candidates": 1,
+          "medium_risk_candidates": 2,
+          "clean_candidates": 5
+        }
+      }
+    },
+    {
+      "id": "hr_resume_005",
+      "metadata": {
+        "sender": "talent.acquisition@company.com",
+        "subject": "【批量筛选】后端工程师岗位 - 30份简历AI预筛选完成",
+        "date": "2025-06-24T11:20:00Z",
+        "category": "hr_resume_screening",
+        "expected_priority": 3
+      },
+      "content": {
+        "body": "后端技术团队，\n\n后端工程师职位(Java方向)的简历AI预筛选已完成，结果如下：\n\n【AI筛选结果统计】\n总简历数：30份\n通过AI初筛：12份\n需人工复审：8份\n直接淘汰：10份\n\n【Top 5推荐候选人】\n\n1. 李明华 - 阿里巴巴高级开发工程师\n   技术栈：Java/Spring Boot/Redis/MySQL/Kafka\n   经验：5年，负责交易系统核心模块\n   亮点：QPS 10万+系统设计经验，熟悉微服务架构\n   薪资期望：50万\n   AI评分：92/100\n\n2. 张颖 - 美团资深后端工程师  \n   技术栈：Java/Dubbo/ElasticSearch/MongoDB\n   经验：4年，外卖配送系统架构师\n   亮点：分布式系统专家，有大数据处理经验\n   薪资期望：45万\n   AI评分：89/100\n\n3. 王志强 - 腾讯后端开发工程师\n   技术栈：Java/Spring Cloud/RocketMQ/PostgreSQL\n   经验：3.5年，社交产品后端负责人\n   亮点：高并发系统优化，DevOps实践经验\n   薪资期望：42万\n   AI评分：85/100\n\n4. 刘佳音 - 字节跳动开发工程师\n   技术栈：Java/Go/Kubernetes/Docker\n   经验：4年，推荐系统后端开发\n   亮点：机器学习工程化，容器化部署专家\n   薪资期望：48万\n   AI评分：84/100\n\n5. 陈浩然 - 滴滴高级工程师\n   技术栈：Java/Netty/HBase/Flink\n   经验：5年，实时计算平台架构\n   亮点：流式处理专家，系统性能调优\n   薪资期望：52万\n   AI评分：82/100\n\n【技能分析洞察】\n• 微服务架构能力：80%候选人具备\n• 高并发处理经验：60%候选人有相关项目\n• 云原生技术：40%候选人熟悉K8s/Docker\n• 大数据技术：30%候选人有Spark/Flink经验\n\n【薪资分析】\n• 平均期望薪资：46.8万\n• 薪资范围：35-60万\n• 与市场水平对比：偏高15%\n\n建议：\n1. 安排Top 5候选人技术面试\n2. 重点考察微服务架构设计能力\n3. 准备高并发场景技术题\n4. 薪资谈判空间预留10-15%\n\n完整简历和AI分析报告已上传到招聘系统。\n\nBest regards,\nTalent Acquisition Team",
+        "expected_analysis": {
+          "action_items": ["安排技术面试", "准备技术考察题", "预留薪资谈判空间"],
+          "deadline": null,
+          "urgency_score": 0.6,
+          "sentiment": "analytical",
+          "position": "后端工程师(Java)",
+          "total_resumes": 30,
+          "ai_passed": 12,
+          "needs_review": 8,
+          "rejected": 10,
+          "avg_expected_salary": "46.8万"
+        }
+      }
+    },
+    {
+      "id": "hr_resume_006", 
+      "metadata": {
+        "sender": "campus.recruiting@company.com",
+        "subject": "2025校园招聘简历筛选：计算机专业应届生批量分析",
+        "date": "2025-06-24T15:30:00Z",
+        "category": "hr_resume_screening",
+        "expected_priority": 2
+      },
+      "content": {
+        "body": "2025届校园招聘简历分析报告\n\n招聘岗位：软件开发工程师(应届生)\n简历收集周期：2025.6.1 - 2025.6.24\n总申请人数：156人\n\n【学校分布TOP10】\n1. 清华大学 - 12人\n2. 北京大学 - 11人  \n3. 中科院大学 - 9人\n4. 浙江大学 - 8人\n5. 上海交通大学 - 8人\n6. 华中科技大学 - 7人\n7. 西安交通大学 - 6人\n8. 南京大学 - 6人\n9. 复旦大学 - 5人\n10. 哈尔滨工业大学 - 5人\n\n【专业分布】\n• 计算机科学与技术：45%\n• 软件工程：25%\n• 人工智能：15%\n• 数据科学：8%\n• 网络工程：4%\n• 其他：3%\n\n【技术能力统计】\n编程语言掌握情况：\n• Python：85%\n• Java：78%\n• C/C++：65%\n• JavaScript：45%\n• Go：25%\n• Rust：8%\n\n框架/技术栈：\n• Spring Boot：35%\n• React/Vue：40%\n• MySQL/PostgreSQL：55%\n• Docker：30%\n• Git版本控制：95%\n\n【项目经验分析】\n优秀项目（10+星标）：\n• 分布式系统设计：3人\n• 机器学习应用：8人\n• 全栈Web应用：15人\n• 移动应用开发：6人\n• 开源贡献：12人\n\n【实习经历】\n有实习经验：45人(29%)\n• 头部互联网公司：18人\n• 传统软件公司：12人\n• 创业公司：10人\n• 研究机构：5人\n\n【推荐候选人(前15名)】\n\n🌟 特殊推荐：\n• 王子豪(清华) - ACM-ICPC世界总决赛银牌，GitHub 2万+ stars\n• 李思雨(北大) - 发表AI顶会论文，Google实习经历\n• 张凯文(中科院) - 开源项目maintainer，Linux内核贡献者\n\n💎 优秀候选人：\n• 陈雨涵(浙大) - 全栈项目leader，创业经历\n• 刘志伟(上交) - 机器学习竞赛冠军，阿里实习\n• 赵美琳(华科) - 系统设计专家，腾讯实习\n• 孙浩然(西交) - 开源贡献者，字节实习\n• 周静雯(南大) - 前端技术专家，美团实习\n• 吴建军(复旦) - 算法竞赛获奖，百度实习\n• 郑晓芳(哈工大) - 网络安全专家，奇安信实习\n\n【筛选建议】\n第一轮面试：邀请前20名候选人\n重点考察：算法基础、项目经验、学习能力\n面试时间：下周开始，每天4-5人\nOffer发放目标：8-10人\n\n薪资建议：\n• 特殊人才：35-40万起薪\n• 优秀毕业生：25-30万起薪\n• 普通候选人：20-25万起薪\n\n2025校招进展顺利，候选人质量整体较高！\n\nCampus Recruiting Team\n联系人：Sarah Liu (sarah.liu@company.com)",
+        "expected_analysis": {
+          "action_items": ["邀请前20名面试", "安排面试时间", "准备考察内容"],
+          "deadline": "下周开始面试",
+          "urgency_score": 0.4,
+          "sentiment": "positive",
+          "position": "软件开发工程师(应届生)",
+          "total_applicants": 156,
+          "top_schools_count": 10,
+          "special_recommendations": 3,
+          "excellent_candidates": 12,
+          "target_offers": "8-10人"
+        }
+      }
+    },
+    {
+      "id": "hr_resume_007",
+      "metadata": {
+        "sender": "executive.search@company.com", 
+        "subject": "【机密】C级高管候选人背景调查完成 - CTO职位终选名单",
+        "date": "2025-06-24T17:00:00Z",
+        "category": "hr_resume_screening",
+        "expected_priority": 5
+      },
+      "content": {
+        "body": "董事会及CEO秘密抄送\n\n主题：CTO职位候选人最终背景调查报告\n保密级别：🔒 机密\n调查周期：2025.6.1 - 2025.6.24\n\n【最终候选人(3位)】\n\n🎯 首选：Dr. Michael Zhang (张志明)\n当前职位：字节跳动副总裁/技术负责人\n年龄：42岁，美籍华人\n教育背景：斯坦福CS博士，MIT学士\n\n优势：\n• 15年技术管理经验，曾任Google/Facebook高级总监\n• 主导过DAU 10亿+产品技术架构\n• 在AI/云计算/大数据领域有深度积累\n• 团队管理能力强，曾管理1000+工程师\n• 技术视野前瞻，多次成功预测技术趋势\n\n背景调查结果：✅ 全部通过\n• 学历验证：真实有效\n• 工作履历：与本人陈述100%吻合\n• 推荐人反馈：9/10分(5位前同事/下属)\n• 业界声誉：极佳，被誉为\"技术领袖\"\n• 诚信记录：无不良记录\n• 竞业协议：已到期，无法律风险\n\n薪资要求：350万基本薪资 + 股票期权\n入职意愿：8/10(对公司AI战略很感兴趣)\n\n🥈 备选1：Linda Chen (陈丽娜)\n当前职位：阿里云总架构师\n年龄：39岁\n教育背景：清华CS博士，CMU访问学者\n\n优势：\n• 12年云计算架构经验\n• 阿里云核心技术负责人，参与双11技术保障\n• 在分布式系统/微服务领域是权威专家\n• 女性技术领导者，有利于公司多元化\n\n背景调查结果：✅ 全部通过\n薪资要求：280万 + 期权\n入职意愿：7/10\n\n🥉 备选2：David Liu (刘大伟)\n当前职位：腾讯科技副总裁\n年龄：45岁\n教育背景：北大CS硕士，清华学士\n\n优势：\n• 18年技术管理经验\n• 腾讯游戏/社交技术架构核心设计者\n• 在高并发/实时系统领域经验丰富\n• 本土化团队管理经验强\n\n背景调查结果：⚠️ 需要关注\n• 竞业协议：还有8个月到期\n• 部分项目涉及机密，需要法务评估\n薪资要求：320万 + 期权\n入职意愿：6/10\n\n【董事会建议】\n1. 首选Michael Zhang，技术能力和管理经验最均衡\n2. 如首选不成功，Linda Chen是很好的备选\n3. David Liu的竞业问题需要法务部门深入评估\n\n【后续行动】\n1. CEO与Michael进行最终面谈\n2. 董事会批准薪资方案\n3. 法务部门准备正式Offer\n4. 预计7月1日正式公布任命\n\n此报告请严格保密，仅限董事会成员查阅。\n\nExecutive Search Committee\nConfidential",
+        "expected_analysis": {
+          "action_items": ["CEO最终面谈", "董事会批准薪资", "法务准备Offer", "7月1日公布任命"],
+          "deadline": "7月1日",
+          "urgency_score": 0.9,
+          "sentiment": "confidential",
+          "position": "CTO",
+          "candidates_count": 3,
+          "preferred_candidate": "Dr. Michael Zhang",
+          "background_check": "completed",
+          "confidentiality_level": "high"
+        }
+      }
     }
   ]
 } 

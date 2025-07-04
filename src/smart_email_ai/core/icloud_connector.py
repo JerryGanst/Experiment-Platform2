@@ -55,9 +55,10 @@ class iCloudConnector:
                     self.IMAP_PORT, 
                     ssl_context=context
                 )
-                self._log_info("✅ 使用标准SSL连接成功（推荐模式）")
+                # 移除print语句，避免MCP JSON解析错误
             except ssl.SSLError as ssl_err:
                 # 如果SSL验证失败，尝试禁用证书验证（仅用于开发/测试）
+                # 移除print语句，避免MCP JSON解析错误
                 self._log_info(f"标准SSL连接失败: {ssl_err}")
                 self._log_info("🔧 尝试使用宽松SSL设置...")
                 
@@ -71,6 +72,7 @@ class iCloudConnector:
                     self.IMAP_PORT, 
                     ssl_context=context
                 )
+                # 移除print语句，避免MCP JSON解析错误
                 self._log_info("⚠️ 使用宽松SSL连接成功（降级模式）")
             
             # 登录验证
@@ -80,6 +82,7 @@ class iCloudConnector:
             self.mail.select('INBOX')
             
             self.connected = True
+            # 移除print语句，避免MCP JSON解析错误
             self._log_info("🎉 iCloud邮箱连接和登录成功")
             return True
             
@@ -189,16 +192,16 @@ class iCloudConnector:
             if isinstance(mail_id, str):
                 mail_id = mail_id.encode()
             
-            self._log_info(f"获取邮件 ID: {mail_id}")
+            # 移除print语句，避免MCP JSON解析错误
             # 修复：使用BODY.PEEK[]而不是RFC822，避免标记邮件为已读
             status, msg_data = self.mail.fetch(mail_id, '(BODY.PEEK[])')
-            self._log_info(f"IMAP fetch状态: {status}, 数据长度: {len(msg_data) if msg_data else 0}")
+            # 移除print语句，避免MCP JSON解析错误
             
             if status == 'OK' and msg_data and len(msg_data) > 0:
                 # 检查返回数据的结构
-                self._log_info(f"消息数据类型: {type(msg_data[0])}, 内容: {str(msg_data[0])[:100]}")
+                # 移除print语句，避免MCP JSON解析错误
                 
-                # 处理不同的返回格式
+                # 处理邮件数据
                 raw_email = None
                 
                 if isinstance(msg_data[0], tuple) and len(msg_data[0]) >= 2:
@@ -251,11 +254,14 @@ class iCloudConnector:
             Dict: 结构化的邮件数据
         """
         try:
+            # 改进日期处理 - 尝试多个日期字段
+            raw_date = msg.get('Date', '') or msg.get('Received', '') or msg.get('Delivery-Date', '')
+            
             parsed = {
                 'subject': self._decode_header(msg.get('Subject', '')),
                 'sender': self._decode_header(msg.get('From', '')),
                 'recipient': self._decode_header(msg.get('To', '')),
-                'date': msg.get('Date', ''),
+                'date': raw_date,
                 'message_id': msg.get('Message-ID', ''),
                 'body_text': self._extract_text_body(msg),
                 'body_html': self._extract_html_body(msg),
@@ -268,7 +274,18 @@ class iCloudConnector:
             # 添加计算字段
             parsed['body_length'] = len(parsed['body_text'])
             parsed['has_attachments'] = len(parsed['attachments']) > 0
-            parsed['parsed_date'] = self._parse_date(parsed['date'])
+            
+            # 改进日期解析 - 如果没有有效日期，使用当前时间
+            parsed_date = self._parse_date(raw_date)
+            if not parsed_date and raw_date:
+                # 如果原始日期存在但解析失败，记录警告但不抛出错误
+                self._log_error(f"日期解析警告 - 原始: '{raw_date}'")
+                parsed_date = datetime.now().isoformat()  # 使用当前时间作为备用
+            elif not raw_date:
+                # 如果完全没有日期信息，使用当前时间
+                parsed_date = datetime.now().isoformat()
+                
+            parsed['parsed_date'] = parsed_date
             
             return parsed
             
@@ -294,15 +311,17 @@ class iCloudConnector:
         if use_cache:
             cached_emails = email_cache_manager.get_recent_emails(count, 'icloud')
             if cached_emails:
-                self._log_info(f"⚡ 从缓存快速获取 {len(cached_emails)} 封邮件 (响应时间 <100ms)")
+                # 移除print语句，避免MCP JSON解析错误
                 return cached_emails
         
         if not self.connected:
             return []
         
         try:
-            self._log_info(f"📡 从iCloud服务器获取最近 {count} 封邮件...")
+            # 移除print语句，避免MCP JSON解析错误
             start_time = datetime.now()
+            
+            self._log_info(f"📡 从iCloud服务器获取最近 {count} 封邮件...")
             
             # 获取所有邮件ID
             mail_ids = self.search_emails('ALL')
@@ -356,24 +375,28 @@ class iCloudConnector:
                         
                         # 添加调试信息
                         date_info = parsed_email.get('date', '无日期')[:19]
-                        self._log_info(f"✅ 解析邮件 {i}/{count}: {parsed_email.get('subject', '无主题')[:30]}... (日期: {date_info})")
+                        # 移除print语句，避免MCP JSON解析错误
+                        pass
                     else:
-                        self._log_error(f"❌ 无法获取邮件ID: {mail_id}")
+                        # 移除print语句，避免MCP JSON解析错误
+                        pass
                         
                 except Exception as e:
-                    self._log_error(f"❌ 解析邮件失败 (ID: {mail_id}): {str(e)}")
+                    # 移除print语句，避免MCP JSON解析错误
                     continue
             
             # 💾 存储到缓存以加速后续访问
             if emails and use_cache:
                 try:
                     stored_count = email_cache_manager.store_emails(emails)
-                    self._log_info(f"💾 已缓存 {stored_count} 封邮件到本地数据库")
+                    # 移除print语句，避免MCP JSON解析错误
+                    pass
                 except Exception as cache_err:
-                    self._log_error(f"❌ 缓存存储失败: {cache_err}")
+                    # 移除print语句，避免MCP JSON解析错误
+                    pass
             
             elapsed_time = (datetime.now() - start_time).total_seconds()
-            self._log_info(f"🎉 成功获取并解析 {len(emails)} 封邮件 (耗时: {elapsed_time:.2f}秒)")
+            # 移除print语句，避免MCP JSON解析错误
             return emails
             
         except Exception as e:
@@ -404,7 +427,7 @@ class iCloudConnector:
             return []
         
         try:
-            self._log_info(f"🔍 在iCloud服务器搜索: '{query}'...")
+            # 移除print语句，避免MCP JSON解析错误
             start_time = datetime.now()
             
             # 构建IMAP搜索条件
@@ -426,7 +449,7 @@ class iCloudConnector:
                     emails.append(parsed_email)
             
             elapsed_time = (datetime.now() - start_time).total_seconds()
-            self._log_info(f"✅ 搜索完成，找到 {len(emails)} 个结果 (耗时: {elapsed_time:.2f}秒)")
+            # 移除print语句，避免MCP JSON解析错误
             
             return emails
             
@@ -533,7 +556,7 @@ class iCloudConnector:
             return 0
     
     def _parse_date(self, date_str: str) -> Optional[str]:
-        """解析邮件日期为标准ISO格式"""
+        """解析邮件日期为标准ISO格式（改进版）"""
         try:
             if not date_str:
                 return None
@@ -541,26 +564,68 @@ class iCloudConnector:
             # 清理日期字符串
             date_str = date_str.strip()
             
-            # 使用email.utils解析日期
-            from email.utils import parsedate_to_datetime
-            dt = parsedate_to_datetime(date_str)
+            # 方法1: 使用email.utils解析日期
+            try:
+                from email.utils import parsedate_to_datetime
+                dt = parsedate_to_datetime(date_str)
+                # 转换为ISO格式字符串
+                return dt.isoformat()
+            except Exception:
+                pass
             
-            # 转换为ISO格式字符串
-            return dt.isoformat()
+            # 方法2: 尝试常见日期格式
+            from datetime import datetime
+            date_formats = [
+                '%a, %d %b %Y %H:%M:%S %z',     # RFC 2822: Thu, 27 Jun 2025 10:30:00 +0800
+                '%a, %d %b %Y %H:%M:%S',        # 不带时区
+                '%d %b %Y %H:%M:%S %z',         # 27 Jun 2025 10:30:00 +0800
+                '%d %b %Y %H:%M:%S',            # 不带时区
+                '%Y-%m-%d %H:%M:%S',            # ISO格式不带时区
+                '%Y-%m-%dT%H:%M:%S',            # ISO T格式
+                '%Y-%m-%dT%H:%M:%SZ',           # UTC格式
+                '%d/%m/%Y %H:%M:%S',            # 27/06/2025 10:30:00
+                '%m/%d/%Y %H:%M:%S',            # 06/27/2025 10:30:00
+            ]
+            
+            for fmt in date_formats:
+                try:
+                    dt = datetime.strptime(date_str, fmt)
+                    return dt.isoformat()
+                except ValueError:
+                    continue
+            
+            # 方法3: 如果包含数字，尝试提取年月日
+            import re
+            # 查找类似 "27 Jun 2025" 的模式
+            match = re.search(r'(\d{1,2})\s+(\w{3})\s+(\d{4})', date_str)
+            if match:
+                day, month_str, year = match.groups()
+                month_map = {
+                    'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04',
+                    'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08',
+                    'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
+                }
+                if month_str in month_map:
+                    month = month_map[month_str]
+                    # 返回基本日期格式
+                    return f"{year}-{month}-{day.zfill(2)}T12:00:00"
+            
+            self._log_error(f"日期解析失败，所有方法都无效: '{date_str}'")
+            return None
             
         except Exception as e:
-            self._log_error(f"日期解析失败 '{date_str}': {e}")
-            # 如果解析失败，尝试返回原始字符串
-            return date_str.strip() if date_str else None
+            self._log_error(f"日期解析异常 '{date_str}': {e}")
+            return None
     
     def _log_error(self, error_msg: str) -> None:
-        """记录错误信息"""
-        # 可以扩展为更复杂的日志记录
-        print(f"[iCloud错误] {error_msg}")
-    
+        """记录错误信息（静默模式，避免MCP JSON解析错误）"""
+        # 移除print输出，避免干扰MCP协议
+        pass
+        
     def _log_info(self, info_msg: str) -> None:
-        """记录信息"""
-        print(f"[iCloud信息] {info_msg}")
+        """记录信息（静默模式，避免MCP JSON解析错误）"""
+        # 移除print输出，避免干扰MCP协议
+        pass
     
     def __enter__(self):
         """上下文管理器入口"""
