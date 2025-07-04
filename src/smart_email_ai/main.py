@@ -640,11 +640,18 @@ def analyze_icloud_recent_emails(count: int = 10, force_refresh: bool = False) -
             analysis += f"   发件人: {email.get('sender', '未知')}\n"
             analysis += f"   日期: {email.get('date', '未知')}\n"
             
-            # 邮件正文预览
-            body_preview = email.get('body_text', '')[:200]
-            if len(body_preview) >= 200:
-                body_preview += "..."
-            analysis += f"   正文预览: {body_preview}\n"
+            # 邮件正文内容（允许显示完整内容）
+            body_text = email.get('body_text', '')
+            # 对于物料规格等重要邮件，显示更多内容
+            if len(body_text) > 1000 and any(keyword in body_text.lower() for keyword in ['物料', '规格', 'pcb', '型号', 'specifications']):
+                # 重要技术邮件显示完整内容
+                analysis += f"   完整正文: {body_text}\n"
+            else:
+                # 普通邮件显示前500个字符
+                body_preview = body_text[:500]
+                if len(body_text) > 500:
+                    body_preview += "..."
+                analysis += f"   正文预览: {body_preview}\n"
             
             # 附件信息
             if email.get('has_attachments'):
@@ -969,7 +976,9 @@ def get_today_latest_emails(force_refresh: bool = False, email_count: int = 20) 
         today_emails = []
         
         def parse_email_date(date_str: str) -> date:
-            """改进的日期解析函数，支持多种格式，统一使用UTC+8时区"""
+            """改进的日期解析函数，支持多种格式，统一使用UTC+8时区
+            🔧 修复了ISO格式解析和日期格式优先级问题
+            """
             if not date_str:
                 return None
             
@@ -979,31 +988,69 @@ def get_today_latest_emails(force_refresh: bool = False, email_count: int = 20) 
                 
                 # 格式1: ISO格式 (2025-06-24T10:30:00Z 或 2025-06-24T10:30:00+08:00)
                 if 'T' in date_str:
-                    # 处理不同的时区标识
-                    if date_str.endswith('Z'):
-                        dt = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
-                        # 转换为UTC+8
-                        dt = dt.astimezone(utc8_timezone)
-                    elif '+' in date_str or date_str.count('-') > 2:
-                        dt = datetime.fromisoformat(date_str)
-                        # 如果没有时区信息，假设为UTC+8
-                        if dt.tzinfo is None:
-                            dt = dt.replace(tzinfo=utc8_timezone)
-                        else:
+                    # 🔧 修复Bug: 更稳健的ISO格式解析
+                    try:
+                        # 处理不同的时区标识
+                        if date_str.endswith('Z'):
+                            dt = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
                             dt = dt.astimezone(utc8_timezone)
-                    else:
-                        # 假设是UTC+8本地时间
-                        dt = datetime.fromisoformat(date_str).replace(tzinfo=utc8_timezone)
-                    
-                    # 返回UTC+8时区的日期
-                    return dt.date()
+                            return dt.date()
+                        else:
+                            # 尝试直接解析ISO格式
+                            dt = datetime.fromisoformat(date_str)
+                            # 如果没有时区信息，假设为UTC+8
+                            if dt.tzinfo is None:
+                                dt = dt.replace(tzinfo=utc8_timezone)
+                            else:
+                                dt = dt.astimezone(utc8_timezone)
+                            return dt.date()
+                    except ValueError:
+                        # ISO格式解析失败，继续尝试其他格式
+                        pass
                 
-                # 格式2: 美式格式 (06/24/2025 或 6/24/2025)
+                # 格式2: 斜杠格式 - 🔧 修复日期格式优先级问题
                 elif '/' in date_str:
                     # 提取日期部分（忽略时间）
                     date_part = date_str.split(' ')[0]
-                    # 支持不同的分隔符和格式
-                    for fmt in ['%m/%d/%Y', '%m/%d/%y', '%d/%m/%Y', '%d/%m/%y']:
+                    
+                    # 智能判断日期格式：优先使用更可能的格式
+                    parts = date_part.split('/')
+                    if len(parts) == 3:
+                        try:
+                            # 转换为数字进行判断
+                            part1, part2, part3 = int(parts[0]), int(parts[1]), int(parts[2])
+                            
+                            # 🔧 修复Bug: 更准确的日期格式判断逻辑
+                            formats_to_try = []
+                            
+                            # 如果第一部分大于12，肯定是DD/MM/YYYY格式
+                            if part1 > 12:
+                                formats_to_try = ['%d/%m/%Y', '%d/%m/%y']
+                            # 如果第二部分大于12，肯定是MM/DD/YYYY格式  
+                            elif part2 > 12:
+                                formats_to_try = ['%m/%d/%Y', '%m/%d/%y']
+                            # 如果第三部分是两位数年份，优先判断
+                            elif part3 < 100:
+                                # 对于两位数年份，优先尝试常见格式
+                                formats_to_try = ['%m/%d/%y', '%d/%m/%y']
+                            else:
+                                # 都小于等于12的情况，根据地区惯例优先DD/MM/YYYY（国际格式）
+                                formats_to_try = ['%d/%m/%Y', '%m/%d/%Y']
+                            
+                            # 尝试解析
+                            for fmt in formats_to_try:
+                                try:
+                                    dt = datetime.strptime(date_part, fmt).replace(tzinfo=utc8_timezone)
+                                    return dt.date()
+                                except ValueError:
+                                    continue
+                                    
+                        except ValueError:
+                            # 数字转换失败，使用通用方法
+                            pass
+                    
+                    # 通用斜杠格式解析
+                    for fmt in ['%d/%m/%Y', '%d/%m/%y', '%m/%d/%Y', '%m/%d/%y']:
                         try:
                             dt = datetime.strptime(date_part, fmt).replace(tzinfo=utc8_timezone)
                             return dt.date()

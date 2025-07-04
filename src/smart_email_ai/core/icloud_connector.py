@@ -254,11 +254,14 @@ class iCloudConnector:
             Dict: 结构化的邮件数据
         """
         try:
+            # 改进日期处理 - 尝试多个日期字段
+            raw_date = msg.get('Date', '') or msg.get('Received', '') or msg.get('Delivery-Date', '')
+            
             parsed = {
                 'subject': self._decode_header(msg.get('Subject', '')),
                 'sender': self._decode_header(msg.get('From', '')),
                 'recipient': self._decode_header(msg.get('To', '')),
-                'date': msg.get('Date', ''),
+                'date': raw_date,
                 'message_id': msg.get('Message-ID', ''),
                 'body_text': self._extract_text_body(msg),
                 'body_html': self._extract_html_body(msg),
@@ -271,7 +274,18 @@ class iCloudConnector:
             # 添加计算字段
             parsed['body_length'] = len(parsed['body_text'])
             parsed['has_attachments'] = len(parsed['attachments']) > 0
-            parsed['parsed_date'] = self._parse_date(parsed['date'])
+            
+            # 改进日期解析 - 如果没有有效日期，使用当前时间
+            parsed_date = self._parse_date(raw_date)
+            if not parsed_date and raw_date:
+                # 如果原始日期存在但解析失败，记录警告但不抛出错误
+                self._log_error(f"日期解析警告 - 原始: '{raw_date}'")
+                parsed_date = datetime.now().isoformat()  # 使用当前时间作为备用
+            elif not raw_date:
+                # 如果完全没有日期信息，使用当前时间
+                parsed_date = datetime.now().isoformat()
+                
+            parsed['parsed_date'] = parsed_date
             
             return parsed
             
@@ -542,7 +556,7 @@ class iCloudConnector:
             return 0
     
     def _parse_date(self, date_str: str) -> Optional[str]:
-        """解析邮件日期为标准ISO格式"""
+        """解析邮件日期为标准ISO格式（改进版）"""
         try:
             if not date_str:
                 return None
@@ -550,17 +564,58 @@ class iCloudConnector:
             # 清理日期字符串
             date_str = date_str.strip()
             
-            # 使用email.utils解析日期
-            from email.utils import parsedate_to_datetime
-            dt = parsedate_to_datetime(date_str)
+            # 方法1: 使用email.utils解析日期
+            try:
+                from email.utils import parsedate_to_datetime
+                dt = parsedate_to_datetime(date_str)
+                # 转换为ISO格式字符串
+                return dt.isoformat()
+            except Exception:
+                pass
             
-            # 转换为ISO格式字符串
-            return dt.isoformat()
+            # 方法2: 尝试常见日期格式
+            from datetime import datetime
+            date_formats = [
+                '%a, %d %b %Y %H:%M:%S %z',     # RFC 2822: Thu, 27 Jun 2025 10:30:00 +0800
+                '%a, %d %b %Y %H:%M:%S',        # 不带时区
+                '%d %b %Y %H:%M:%S %z',         # 27 Jun 2025 10:30:00 +0800
+                '%d %b %Y %H:%M:%S',            # 不带时区
+                '%Y-%m-%d %H:%M:%S',            # ISO格式不带时区
+                '%Y-%m-%dT%H:%M:%S',            # ISO T格式
+                '%Y-%m-%dT%H:%M:%SZ',           # UTC格式
+                '%d/%m/%Y %H:%M:%S',            # 27/06/2025 10:30:00
+                '%m/%d/%Y %H:%M:%S',            # 06/27/2025 10:30:00
+            ]
+            
+            for fmt in date_formats:
+                try:
+                    dt = datetime.strptime(date_str, fmt)
+                    return dt.isoformat()
+                except ValueError:
+                    continue
+            
+            # 方法3: 如果包含数字，尝试提取年月日
+            import re
+            # 查找类似 "27 Jun 2025" 的模式
+            match = re.search(r'(\d{1,2})\s+(\w{3})\s+(\d{4})', date_str)
+            if match:
+                day, month_str, year = match.groups()
+                month_map = {
+                    'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04',
+                    'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08',
+                    'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
+                }
+                if month_str in month_map:
+                    month = month_map[month_str]
+                    # 返回基本日期格式
+                    return f"{year}-{month}-{day.zfill(2)}T12:00:00"
+            
+            self._log_error(f"日期解析失败，所有方法都无效: '{date_str}'")
+            return None
             
         except Exception as e:
-            self._log_error(f"日期解析失败 '{date_str}': {e}")
-            # 如果解析失败，尝试返回原始字符串
-            return date_str.strip() if date_str else None
+            self._log_error(f"日期解析异常 '{date_str}': {e}")
+            return None
     
     def _log_error(self, error_msg: str) -> None:
         """记录错误信息（静默模式，避免MCP JSON解析错误）"""
