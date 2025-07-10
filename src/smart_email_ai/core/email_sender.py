@@ -21,7 +21,7 @@ from pathlib import Path
 class EmailSender:
     """邮件发送器 - 支持多种邮件服务器和动态发件人配置"""
     
-    def __init__(self, email_address: str = None, password: str = None, provider: str = None, use_default: bool = False):
+    def __init__(self, email_address: str, password: str, provider: Optional[str] = None, use_default: bool = False):
         """
         初始化邮件发送器
         
@@ -409,12 +409,12 @@ Smart Email AI 分析报告
     
     @classmethod
     def create_default_sender(cls) -> 'EmailSender':
-        """创建默认发件人实例（Jerry的iCloud）
-        
-        Returns:
-            EmailSender: 使用默认配置的邮件发送器实例
+        """（已弃用）创建默认发件人实例
+
+        由于 `EmailSender` 现在需要显式的 `email_address` 与 `password`，
+        此方法已被弃用。如需默认发件人，请使用 `configure_default_email_sender` MCP 工具进行配置。
         """
-        return cls(use_default=True)
+        raise RuntimeError("create_default_sender 已弃用，请使用 configure_default_email_sender 进行配置")
 
 
 # 全局邮件发送器实例（需要配置邮箱凭证后才能使用）

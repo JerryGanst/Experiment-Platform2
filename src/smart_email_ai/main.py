@@ -19,7 +19,7 @@ try:
     from .core.parser import OutlookEmailParser
     from .core.icloud_connector import iCloudConnector
     from .core.email_cache import email_cache_manager
-    from .core.email_sender import email_sender
+    from .core.email_sender import email_sender, EmailSender
 except ImportError:
     # 处理直接运行时的导入问题
     from interfaces.config_interface import config_manager
@@ -27,7 +27,7 @@ except ImportError:
     from core.parser import OutlookEmailParser
     from core.icloud_connector import iCloudConnector
     from core.email_cache import email_cache_manager
-    from core.email_sender import email_sender
+    from core.email_sender import email_sender, EmailSender
 # AI分析由外部MCP调用者（如Claude）完成，不需要内部AI分析器
 
 # Initialize FastMCP server
@@ -2258,8 +2258,8 @@ def analyze_hr_resume_emails() -> str:
         demo_emails = system.email_manager.load_demo_emails()
         
         hr_emails = [
-            email for email in demo_emails 
-            if email.category == 'hr_resume_screening'
+            mail for mail in demo_emails 
+            if getattr(mail, 'category', '') == 'hr_resume_screening'
         ]
         
         if not hr_emails:
@@ -2267,20 +2267,21 @@ def analyze_hr_resume_emails() -> str:
         
         analysis = f"👔 **HR简历筛选邮件分析** ({len(hr_emails)} 封)\n\n"
         
-        for i, email in enumerate(hr_emails, 1):
-            analysis += f"**{i}. {email.subject}**\n"
-            analysis += f"📧 发件人: {email.sender}\n"
-            analysis += f"📅 日期: {email.date}\n"
-            analysis += f"⭐ 优先级: {email.expected_priority}/5\n"
-            
-            # 提取候选人信息
-            if hasattr(email, 'expected_analysis') and 'candidates' in email.expected_analysis:
-                candidates = email.expected_analysis['candidates']
+        for i, mail in enumerate(hr_emails, 1):
+            analysis += f"**{i}. {mail.subject}**\n"
+            analysis += f"📧 发件人: {mail.sender}\n"
+            analysis += f"📅 日期: {mail.date}\n"
+            analysis += f"⭐ 优先级: {getattr(mail, 'expected_priority', 0)}/5\n"
+
+            # 提取候选人信息（需确保 expected_analysis 为 dict）
+            expected = getattr(mail, 'expected_analysis', None)
+            if isinstance(expected, dict) and 'candidates' in expected:
+                candidates = expected['candidates']
                 analysis += f"👥 候选人数量: {len(candidates)}\n"
                 for candidate in candidates:
-                    analysis += f"   • {candidate['name']}: {candidate['background']} (薪资:{candidate['salary']})\n"
-            
-            analysis += f"📝 内容预览: {email.body[:150]}...\n\n"
+                    analysis += f"   • {candidate.get('name', '未知')}: {candidate.get('background', '')} (薪资:{candidate.get('salary', 'N/A')})\n"
+
+            analysis += f"📝 内容预览: {mail.body[:150]}...\n\n"
         
         return analysis
         
@@ -2300,8 +2301,8 @@ def get_hr_resume_insights() -> str:
         demo_emails = system.email_manager.load_demo_emails()
         
         hr_emails = [
-            email for email in demo_emails 
-            if email.category == 'hr_resume_screening'
+            mail for mail in demo_emails 
+            if getattr(mail, 'category', '') == 'hr_resume_screening'
         ]
         
         if not hr_emails:
@@ -2309,13 +2310,14 @@ def get_hr_resume_insights() -> str:
         
         # 统计分析
         total_emails = len(hr_emails)
-        urgent_emails = len([e for e in hr_emails if e.expected_priority >= 4])
+        urgent_emails = len([e for e in hr_emails if getattr(e, 'expected_priority', 0) >= 4])
         
         # 职位分析
-        positions = {}
-        for email in hr_emails:
-            if hasattr(email, 'expected_analysis'):
-                position = email.expected_analysis.get('position', '未知职位')
+        positions: Dict[str, int] = {}
+        for mail in hr_emails:
+            expected = getattr(mail, 'expected_analysis', None)
+            if isinstance(expected, dict):
+                position = expected.get('position', '未知职位')
                 positions[position] = positions.get(position, 0) + 1
         
         report = f"""📊 **HR简历筛选洞察报告**
@@ -2323,7 +2325,7 @@ def get_hr_resume_insights() -> str:
 🔢 **总体统计:**
 • 简历筛选邮件总数: {total_emails} 封
 • 高优先级邮件: {urgent_emails} 封
-• 平均优先级: {sum(e.expected_priority for e in hr_emails) / total_emails:.1f}/5
+• 平均优先级: {sum(getattr(e, 'expected_priority', 0) for e in hr_emails) / total_emails:.1f}/5
 
 💼 **职位分布:**
 """
@@ -2371,8 +2373,8 @@ def filter_hr_emails_by_priority(min_priority: int = 3) -> str:
         demo_emails = system.email_manager.load_demo_emails()
         
         hr_emails = [
-            email for email in demo_emails 
-            if email.category == 'hr_resume_screening' and email.expected_priority >= min_priority
+            mail for mail in demo_emails 
+            if getattr(mail, 'category', '') == 'hr_resume_screening' and getattr(mail, 'expected_priority', 0) >= min_priority
         ]
         
         if not hr_emails:
@@ -2381,15 +2383,15 @@ def filter_hr_emails_by_priority(min_priority: int = 3) -> str:
         result = f"🎯 **优先级 >={min_priority} 的HR邮件** ({len(hr_emails)} 封)\n\n"
         
         # 按优先级排序
-        hr_emails.sort(key=lambda x: x.expected_priority, reverse=True)
+        hr_emails.sort(key=lambda x: getattr(x, 'expected_priority', 0), reverse=True)
         
-        for i, email in enumerate(hr_emails, 1):
+        for i, mail in enumerate(hr_emails, 1):
             priority_icons = {5: "🚨", 4: "📋", 3: "📰"}
-            icon = priority_icons.get(email.expected_priority, "📧")
+            icon = priority_icons.get(getattr(mail, 'expected_priority', 0), "📧")
             
-            result += f"{icon} **{i}. {email.subject}** (优先级:{email.expected_priority}/5)\n"
-            result += f"📤 {email.sender} | 📅 {email.date}\n"
-            result += f"📝 {email.body[:100]}...\n\n"
+            result += f"{icon} **{i}. {mail.subject}** (优先级:{getattr(mail, 'expected_priority', 0)}/5)\n"
+            result += f"📤 {mail.sender} | 📅 {mail.date}\n"
+            result += f"📝 {mail.body[:100]}...\n\n"
         
         return result
         
@@ -2409,18 +2411,19 @@ def get_candidate_summary() -> str:
         demo_emails = system.email_manager.load_demo_emails()
         
         hr_emails = [
-            email for email in demo_emails 
-            if email.category == 'hr_resume_screening'
+            mail for mail in demo_emails 
+            if getattr(mail, 'category', '') == 'hr_resume_screening'
         ]
         
         all_candidates = []
         
         # 提取所有候选人信息
-        for email in hr_emails:
-            if hasattr(email, 'expected_analysis') and 'candidates' in email.expected_analysis:
-                candidates = email.expected_analysis['candidates']
+        for mail in hr_emails:
+            expected = getattr(mail, 'expected_analysis', None)
+            if isinstance(expected, dict) and 'candidates' in expected:
+                candidates = expected['candidates']
                 for candidate in candidates:
-                    candidate['source_email'] = email.subject
+                    candidate['source_email'] = mail.subject
                     all_candidates.append(candidate)
         
         if not all_candidates:
