@@ -35,6 +35,11 @@ class ConfigInterface(ABC):
         """获取系统运行配置"""
         pass
 
+    @abstractmethod
+    def get_ai_settings(self) -> Dict[str, Any]:
+        """获取AI相关配置"""
+        pass
+
 
 class YamlConfigManager(ConfigInterface):
     """基于YAML的配置管理器"""
@@ -75,6 +80,10 @@ class YamlConfigManager(ConfigInterface):
     def get_system_settings(self) -> Dict[str, Any]:
         """获取系统运行配置"""
         return self._config.get('system_settings', {})
+
+    def get_ai_settings(self) -> Dict[str, Any]:
+        """获取AI相关配置"""
+        return self._config.get('ai_settings', {})
     
     def get_mcp_settings(self) -> Dict[str, Any]:
         """获取MCP服务配置"""
@@ -116,6 +125,11 @@ class YamlConfigManager(ConfigInterface):
             'system_settings': {
                 'demo_mode': False,
                 'log_level': 'INFO'
+            },
+            'ai_settings': {
+                'learning_rate': 1e-4,
+                'trust_threshold': 0.5,
+                'priority_weights': {}
             },
             'mcp_settings': {
                 'server_name': 'smart_email_ai',
