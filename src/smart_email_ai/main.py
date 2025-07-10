@@ -9,7 +9,7 @@ import os
 # 添加模块路径
 sys.path.append(os.path.dirname(__file__))
 
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, cast
 from mcp.server.fastmcp import FastMCP
 
 # 导入解耦的模块
@@ -1654,9 +1654,13 @@ def send_email_to_anyone(to_email: str, subject: str, content: str,
             result = custom_sender.send_email(to_email, subject, content, content_type)
             sender_info = f"自定义发件人: {from_email}"
         else:
-            # 使用默认发件人
-            result = email_sender.send_email(to_email, subject, content, content_type)
-            sender_info = f"默认发件人: {email_sender.email_address}"
+            # 使用默认发件人（需要事先配置全局 email_sender）
+            if email_sender is None:
+                return "❌ 默认发件人未配置，请在调用前通过 configure_default_email_sender(email, password) 进行设置，或在函数中提供 from_email 和 from_password 参数。"
+            # 类型断言：此处 email_sender 一定不为 None
+            sender_nonnull = cast(Any, email_sender)
+            result = sender_nonnull.send_email(to_email, subject, content, content_type)
+            sender_info = f"默认发件人: {sender_nonnull.email_address}"
         
         if result['success']:
             return f"""✅ **邮件发送成功**
@@ -1724,7 +1728,9 @@ def send_bulk_email(recipients: str, subject: str, content: str,
             sender = EmailSender.create_custom_sender(from_email, from_password)
             sender_info = f"自定义发件人: {from_email}"
         else:
-            sender = email_sender
+            if email_sender is None:
+                return "❌ 默认发件人未配置，请先调用 configure_default_email_sender(email, password) 配置，或为 send_bulk_email 提供 from_email 和 from_password 参数。"
+            sender = cast(Any, email_sender)
             sender_info = f"默认发件人: {sender.email_address}"
         
         # 批量发送
@@ -1818,7 +1824,10 @@ def send_html_email_with_attachments(to_email: str, subject: str, html_content: 
         attachment_list = [path.strip() for path in attachments.split(',') if path.strip()] if attachments else None
         
         # 发送邮件
-        result = email_sender.send_email(
+        if email_sender is None:
+            return "❌ 默认发件人未配置，请先调用 configure_default_email_sender(email, password) 进行设置。"
+        sender_nonnull = cast(Any, email_sender)
+        result = sender_nonnull.send_email(
             to_email=to_email,
             subject=subject,
             content=html_content,
@@ -1917,7 +1926,10 @@ def send_email_analysis_report(to_email: str, include_recent_emails: bool = True
                     })
         
         # 发送分析报告
-        result = email_sender.send_analysis_report(to_email, analysis_data)
+        if email_sender is None:
+            return "❌ 默认发件人未配置，请先调用 configure_default_email_sender(email, password) 后再发送报告。"
+        sender_nonnull = cast(Any, email_sender)
+        result = sender_nonnull.send_analysis_report(to_email, analysis_data)
         
         if result['success']:
             return f"""✅ **邮件分析报告发送成功**
@@ -1959,7 +1971,10 @@ def send_email_analysis_report(to_email: str, include_recent_emails: bool = True
 def test_email_server_connection() -> str:
     """测试邮件服务器连接状态"""
     try:
-        result = email_sender.test_connection()
+        if email_sender is None:
+            return "❌ 默认发件人未配置，请先调用 configure_default_email_sender(email, password) 进行设置。"
+        sender_nonnull = cast(Any, email_sender)
+        result = sender_nonnull.test_connection()
         
         if result['success']:
             return f"""✅ **邮件服务器连接成功**
@@ -2006,14 +2021,17 @@ def test_email_server_connection() -> str:
 def get_email_sender_status() -> str:
     """获取邮件发送器状态和配置信息"""
     try:
+        if email_sender is None:
+            return "❌ 默认发件人未配置，请先调用 configure_default_email_sender(email, password) 进行设置。"
+        sender_nonnull = cast(Any, email_sender)
         return f"""📧 **邮件发送器状态**
 
 🔧 **当前配置:**
-• 发件人邮箱: {email_sender.email_address}
-• 邮件服务商: {email_sender.provider}
-• SMTP服务器: {email_sender.smtp_config[email_sender.provider]['server']}
-• 端口: {email_sender.smtp_config[email_sender.provider]['port']}
-• TLS加密: {'✅ 启用' if email_sender.smtp_config[email_sender.provider]['use_tls'] else '❌ 禁用'}
+• 发件人邮箱: {sender_nonnull.email_address}
+• 邮件服务商: {sender_nonnull.provider}
+• SMTP服务器: {sender_nonnull.smtp_config[sender_nonnull.provider]['server']}
+• 端口: {sender_nonnull.smtp_config[sender_nonnull.provider]['port']}
+• TLS加密: {'✅ 启用' if sender_nonnull.smtp_config[sender_nonnull.provider]['use_tls'] else '❌ 禁用'}
 
 📨 **支持的邮件类型:**
 • 纯文本邮件: ✅ 支持
@@ -2038,7 +2056,6 @@ def get_email_sender_status() -> str:
 3. 大附件建议分批发送
 4. 重要邮件建议添加纯文本备用
 """
-        
     except Exception as e:
         return f"❌ 获取发送器状态失败: {str(e)}" 
 
@@ -2436,3 +2453,22 @@ def get_candidate_summary() -> str:
         
     except Exception as e:
         return f"❌ 候选人汇总失败: {str(e)}"
+
+# ========== 📧 默认发件人配置工具 ==========
+
+@mcp.tool()
+def configure_default_email_sender(email_address: str, password: str, provider: str = "") -> str:
+    """配置全局默认发件人邮箱
+    
+    Args:
+        email_address: 发件人邮箱地址
+        password: 邮箱密码或应用专用密码
+        provider: 可选，邮件服务商标识（icloud/gmail/outlook 等），留空则自动检测
+    """
+    global email_sender
+    try:
+        email_sender = EmailSender(email_address=email_address, password=password, provider=provider or None)
+        sender_nonnull = cast(Any, email_sender)
+        return f"✅ 已成功配置默认发件人: {email_address} (服务商: {sender_nonnull.provider})"
+    except Exception as e:
+        return f"❌ 默认发件人配置失败: {str(e)}"

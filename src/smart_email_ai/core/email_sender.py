@@ -38,11 +38,12 @@ class EmailSender:
         self.email_address = email_address
         self.password = password
         
-        # 自动检测邮件服务商
-        if not provider:
-            provider = self._detect_provider(email_address)
-        
-        self.provider = provider
+        # 确定邮件服务商
+        # 如果调用方显式指定 provider，则直接使用；否则根据邮箱地址自动检测
+        if provider:
+            self.provider = provider.lower()
+        else:
+            self.provider = self._detect_email_provider()
         
         # iCloud SMTP 配置
         self.smtp_config = {
@@ -64,11 +65,8 @@ class EmailSender:
         }
         
         # 验证支持的服务商
-        if provider not in self.smtp_config:
-            raise ValueError(f"不支持的邮件服务商: {provider}")
-        
-        # 检测邮箱类型
-        self.provider = self._detect_email_provider()
+        if self.provider not in self.smtp_config:
+            raise ValueError(f"不支持的邮件服务商: {self.provider}")
         self.server_config = self.smtp_config.get(self.provider, self.smtp_config['icloud'])
         self.connected = False
         
