@@ -64,6 +64,10 @@ class YamlConfigManager(ConfigInterface):
         except Exception as e:
             print(f"❌ 配置文件加载失败: {e}")
             self._config = self._get_default_config()
+
+        # 保底：确保 _config 至少是空 dict，避免 None 类型访问错误
+        if self._config is None:
+            self._config = {}
     
     def load_config(self) -> Dict[str, Any]:
         """获取完整配置"""
