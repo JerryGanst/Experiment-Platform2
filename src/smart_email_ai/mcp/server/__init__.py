@@ -1,0 +1,1 @@
+"""Server subpackage for internal MCP mock."""
