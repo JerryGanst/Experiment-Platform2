@@ -1642,7 +1642,7 @@ def send_email_to_anyone(to_email: str, subject: str, content: str,
         to_email: 收件人邮箱地址
         subject: 邮件主题
         content: 邮件内容
-        from_email: 发件人邮箱（可选，默认使用User的iCloud）
+        from_email: 发件人邮箱（可选，默认使用Jerry的iCloud）
         from_password: 发件人密码（可选，与from_email配对使用）
         content_type: 内容类型 ('html' 或 'plain')
     """
@@ -1674,7 +1674,7 @@ def send_email_to_anyone(to_email: str, subject: str, content: str,
 • 发送状态: 成功投递到SMTP服务器
 
 💡 **使用提示:**
-- 默认使用User的iCloud邮箱发送
+- 默认使用Jerry的iCloud邮箱发送
 - 可通过from_email和from_password参数使用自定义发件人
 - 支持HTML和纯文本格式
 """

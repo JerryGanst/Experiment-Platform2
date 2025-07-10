@@ -16,7 +16,7 @@ DEMO_EMAILS_DATA: List[Dict[str, Any]] = [
             "demo_tags": ["urgent", "work", "deadline"]
         },
         "content": {
-            "body": """Hi User,
+            "body": """Hi Jerry,
 
 I hope this email finds you well. Unfortunately, I have some urgent news regarding our Q2 client presentation.
 
@@ -137,12 +137,12 @@ Here's our weekly project status update for Project Phoenix:
 🎯 On Track for June 30th deadline
 
 Completed This Week:
-✅ Database migration (User)
+✅ Database migration (Jerry)
 ✅ UI mockups approved (Design team)
 ✅ API testing phase 1 (Dev team)
 
 Action Items for Next Week:
-🔄 User: Finalize performance optimization
+🔄 Jerry: Finalize performance optimization
 🔄 Design: Create final assets
 🔄 QA: Begin integration testing
 
@@ -175,7 +175,7 @@ Project Manager""",
             "demo_tags": ["security", "notification", "google"]
         },
         "content": {
-            "body": """我们发现您的 Google 账号 (user@example.com) 在一部 Mac 设备上有新的登录活动。
+            "body": """我们发现您的 Google 账号 (jerryganst666@gmail.com) 在一部 Mac 设备上有新的登录活动。
 如果这是您本人的操作，则无需采取任何行动。
 如果这不是您本人的操作，我们会帮助您保护您的账号。
 

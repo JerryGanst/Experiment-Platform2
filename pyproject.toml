@@ -10,4 +10,5 @@ dependencies = [
     "html2text>=2020.1.16",
     "lxml>=4.9.0",
     "pyyaml>=6.0",
+    "pdfplumber>=0.11.7",
 ]

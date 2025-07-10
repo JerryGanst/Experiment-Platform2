@@ -411,7 +411,7 @@ Smart Email AI 分析报告
     
     @classmethod
     def create_default_sender(cls) -> 'EmailSender':
-        """创建默认发件人实例（User的iCloud）
+        """创建默认发件人实例（Jerry的iCloud）
         
         Returns:
             EmailSender: 使用默认配置的邮件发送器实例
