@@ -49,10 +49,12 @@ class RefactoredEmailSystem:
     
     def __init__(self):
         # 加载配置
-        self.config = config_manager.load_config()
+        from typing import Dict as _Dict, Any as _Any
+
+        self.config: _Dict[str, _Any] = config_manager.load_config()
         
         # 初始化组件
-        parser_config = config_manager.get_parser_settings()
+        parser_config: Dict[str, Any] = config_manager.get_parser_settings()
         self.outlook_parser = OutlookEmailParser(parser_config)
         
         # 暂时保持原有AI分析器，后续可以解耦
@@ -383,9 +385,9 @@ def get_system_status() -> str:
 def test_config_loading() -> str:
     """测试配置加载功能"""
     try:
-        ai_settings = config_manager.get_ai_settings()
-        parser_settings = config_manager.get_parser_settings()
-        system_settings = config_manager.get_system_settings()
+        ai_settings: Dict[str, Any] = config_manager.get_ai_settings()
+        parser_settings: Dict[str, Any] = config_manager.get_parser_settings()
+        system_settings: Dict[str, Any] = config_manager.get_system_settings()
         
         return f"""🔧 **配置加载测试**
 
@@ -979,7 +981,7 @@ def get_today_latest_emails(force_refresh: bool = False, email_count: int = 20) 
         # 筛选今日邮件
         today_emails = []
         
-        def parse_email_date(date_str: str) -> date:
+        def parse_email_date(date_str: str) -> Optional[date]:
             """改进的日期解析函数，支持多种格式，统一使用UTC+8时区
             🔧 修复了ISO格式解析和日期格式优先级问题
             """
