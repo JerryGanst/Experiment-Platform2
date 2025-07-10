@@ -45,8 +45,9 @@ class YamlConfigManager(ConfigInterface):
     """基于YAML的配置管理器"""
     
     def __init__(self, config_path: str = "data/config.yaml"):
-        self.config_path = config_path
-        self._config = None
+        self.config_path: str = config_path
+        # _config 始终保持为字典，避免 Optional 导致的类型告警
+        self._config: Dict[str, Any] = {}
         self._load_config()
     
     def _load_config(self) -> None:
@@ -65,8 +66,8 @@ class YamlConfigManager(ConfigInterface):
             print(f"❌ 配置文件加载失败: {e}")
             self._config = self._get_default_config()
 
-        # 保底：确保 _config 至少是空 dict，避免 None 类型访问错误
-        if self._config is None:
+        # _config 已保证为 dict，但为安全再次确保类型正确
+        if not isinstance(self._config, dict):
             self._config = {}
     
     def load_config(self) -> Dict[str, Any]:
