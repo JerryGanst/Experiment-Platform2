@@ -96,7 +96,9 @@ class SQLiteCache:
     
     def init_database(self):
         """初始化数据库表结构"""
-        with sqlite3.connect(self.db_path) as conn:
+        with sqlite3.connect(self.db_path, check_same_thread=False) as conn:
+            # 应用性能优化设置
+            self._apply_performance_optimizations(conn)
             # 邮件索引表
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS emails_index (
@@ -317,12 +319,27 @@ class SQLiteCache:
             for _ in range(self.pool_size):
                 conn = sqlite3.connect(self.db_path, check_same_thread=False)
                 conn.row_factory = sqlite3.Row
-                # 优化SQLite性能
-                conn.execute("PRAGMA journal_mode=WAL")
-                conn.execute("PRAGMA synchronous=NORMAL")
-                conn.execute("PRAGMA cache_size=10000")
-                conn.execute("PRAGMA temp_store=memory")
+                self._apply_performance_optimizations(conn)
                 self._connection_pool.append(conn)
+
+    def _apply_performance_optimizations(self, conn: sqlite3.Connection) -> None:
+        """应用SQLite性能优化设置"""
+        try:
+            # WAL模式 - 提高并发性能
+            conn.execute("PRAGMA journal_mode=WAL")
+            # 同步模式 - 平衡性能和数据安全
+            conn.execute("PRAGMA synchronous=NORMAL")
+            # 缓存大小 - 增加内存缓存
+            conn.execute("PRAGMA cache_size=10000")
+            # 临时存储 - 使用内存存储临时数据
+            conn.execute("PRAGMA temp_store=memory")
+            # 页面大小 - 优化存储效率
+            conn.execute("PRAGMA page_size=4096")
+            # 内存映射 - 提高读取性能
+            conn.execute("PRAGMA mmap_size=268435456")  # 256MB
+        except Exception as e:
+            # 如果PRAGMA设置失败，记录但不中断连接创建
+            pass
 
     @contextmanager
     def _get_connection(self):
@@ -334,6 +351,8 @@ class SQLiteCache:
                 # 池子空了，创建新连接
                 conn = sqlite3.connect(self.db_path, check_same_thread=False)
                 conn.row_factory = sqlite3.Row
+                # 应用性能优化设置，确保与池化连接一致
+                self._apply_performance_optimizations(conn)
         
         try:
             yield conn
@@ -452,7 +471,9 @@ class EmailCacheManager:
         # 如果指定了账户类型，清空对应的SQLite缓存
         if account_type:
             try:
-                with sqlite3.connect(self.sqlite_cache.db_path) as conn:
+                with sqlite3.connect(self.sqlite_cache.db_path, check_same_thread=False) as conn:
+                    # 应用性能优化设置
+                    self.sqlite_cache._apply_performance_optimizations(conn)
                     # 先删除依赖表中的数据，再删除主表数据
                     conn.execute("DELETE FROM email_content WHERE email_id IN (SELECT id FROM emails_index WHERE account_type = ?)", (account_type,))
                     conn.execute("DELETE FROM email_fts WHERE email_id IN (SELECT id FROM emails_index WHERE account_type = ?)", (account_type,))
@@ -466,7 +487,9 @@ class EmailCacheManager:
         else:
             # 清空所有SQLite缓存
             try:
-                with sqlite3.connect(self.sqlite_cache.db_path) as conn:
+                with sqlite3.connect(self.sqlite_cache.db_path, check_same_thread=False) as conn:
+                    # 应用性能优化设置
+                    self.sqlite_cache._apply_performance_optimizations(conn)
                     # 先删除依赖表，再删除主表
                     conn.execute("DELETE FROM email_content")
                     conn.execute("DELETE FROM email_fts")
