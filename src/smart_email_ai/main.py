@@ -107,6 +107,16 @@ class RefactoredEmailSystem:
     def parse_outlook_email(self, html_content: str) -> str:
         """解析Outlook邮件"""
         try:
+            # 类型安全检查
+            if not html_content:
+                return "❌ 邮件内容为空，无法解析"
+            
+            if not isinstance(html_content, str):
+                try:
+                    html_content = str(html_content)
+                except Exception as e:
+                    return f"❌ 邮件内容类型错误: {e}"
+            
             parsed_section = self.outlook_parser.parse_email(html_content)
             markdown_result = self.outlook_parser.format_to_markdown(parsed_section)
             
@@ -140,6 +150,16 @@ class RefactoredEmailSystem:
     def analyze_outlook_email_with_ai(self, html_content: str) -> str:
         """解析Outlook邮件并进行AI分析"""
         try:
+            # 类型安全检查
+            if not html_content:
+                return "❌ 邮件内容为空，无法分析"
+            
+            if not isinstance(html_content, str):
+                try:
+                    html_content = str(html_content)
+                except Exception as e:
+                    return f"❌ 邮件内容类型错误: {e}"
+            
             # 首先解析邮件结构
             parsed_section = self.outlook_parser.parse_email(html_content)
             
@@ -363,6 +383,16 @@ def parse_outlook_email(html_content: str) -> str:
     Args:
         html_content: Outlook邮件的HTML内容
     """
+    # 输入验证
+    if not html_content:
+        return "❌ 邮件内容为空，请提供有效的HTML内容"
+    
+    if not isinstance(html_content, str):
+        try:
+            html_content = str(html_content)
+        except Exception as e:
+            return f"❌ 邮件内容类型错误: {e}"
+    
     system = get_email_system()
     return system.parse_outlook_email(html_content)
 
@@ -373,6 +403,16 @@ def analyze_outlook_email_structure(html_content: str) -> str:
     Args:
         html_content: Outlook邮件的HTML内容
     """
+    # 输入验证
+    if not html_content:
+        return "❌ 邮件内容为空，请提供有效的HTML内容"
+    
+    if not isinstance(html_content, str):
+        try:
+            html_content = str(html_content)
+        except Exception as e:
+            return f"❌ 邮件内容类型错误: {e}"
+    
     system = get_email_system()
     return system.analyze_outlook_email_with_ai(html_content)
 
@@ -439,6 +479,16 @@ def extract_outlook_tables(html_content: str) -> str:
         html_content: Outlook邮件的HTML内容
     """
     try:
+        # 输入验证
+        if not html_content:
+            return "❌ 邮件内容为空，请提供有效的HTML内容"
+        
+        if not isinstance(html_content, str):
+            try:
+                html_content = str(html_content)
+            except Exception as e:
+                return f"❌ 邮件内容类型错误: {e}"
+        
         # 解析邮件
         system = get_email_system()
         parsed_section = system.outlook_parser.parse_email(html_content)

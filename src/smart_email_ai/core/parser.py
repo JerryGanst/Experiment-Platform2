@@ -69,6 +69,28 @@ class OutlookEmailParser:
         Returns:
             EmailSection: 解析后的邮件结构
         """
+        # 类型安全检查
+        if email_content is None:
+            raise ValueError("email_content 不能为 None")
+        
+        if not isinstance(email_content, str):
+            # 尝试转换为字符串
+            try:
+                email_content = str(email_content)
+            except Exception as e:
+                raise TypeError(f"无法将 email_content 转换为字符串: {e}")
+        
+        # 检查是否为空字符串
+        if not email_content.strip():
+            return EmailSection(
+                header={},
+                body="",
+                tables=[],
+                attachments=[],
+                forwarded_emails=[],
+                level=0
+            )
+        
         # 清理HTML并创建BeautifulSoup对象
         soup = self._clean_outlook_html(email_content)
 
@@ -80,6 +102,10 @@ class OutlookEmailParser:
 
     def _clean_outlook_html(self, html_content: str) -> BeautifulSoup:
         """清理Outlook特有的HTML标记"""
+        # 确保输入不为空
+        if not html_content:
+            return BeautifulSoup("", 'html.parser')
+        
         # 移除Word的XML命名空间和VML图形
         html_content = re.sub(r'<\?xml[^>]*>', '', html_content)
         html_content = re.sub(r'xmlns[^=]*="[^"]*"', '', html_content)
