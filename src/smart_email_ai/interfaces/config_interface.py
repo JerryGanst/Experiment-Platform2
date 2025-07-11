@@ -35,13 +35,19 @@ class ConfigInterface(ABC):
         """获取系统运行配置"""
         pass
 
+    @abstractmethod
+    def get_ai_settings(self) -> Dict[str, Any]:
+        """获取AI相关配置"""
+        pass
+
 
 class YamlConfigManager(ConfigInterface):
     """基于YAML的配置管理器"""
     
     def __init__(self, config_path: str = "data/config.yaml"):
-        self.config_path = config_path
-        self._config = None
+        self.config_path: str = config_path
+        # _config 始终保持为字典，避免 Optional 导致的类型告警
+        self._config: Dict[str, Any] = {}
         self._load_config()
     
     def _load_config(self) -> None:
@@ -59,6 +65,10 @@ class YamlConfigManager(ConfigInterface):
         except Exception as e:
             print(f"❌ 配置文件加载失败: {e}")
             self._config = self._get_default_config()
+
+        # _config 已保证为 dict，但为安全再次确保类型正确
+        if not isinstance(self._config, dict):
+            self._config = {}
     
     def load_config(self) -> Dict[str, Any]:
         """获取完整配置"""
@@ -75,6 +85,10 @@ class YamlConfigManager(ConfigInterface):
     def get_system_settings(self) -> Dict[str, Any]:
         """获取系统运行配置"""
         return self._config.get('system_settings', {})
+
+    def get_ai_settings(self) -> Dict[str, Any]:
+        """获取AI相关配置"""
+        return self._config.get('ai_settings', {})
     
     def get_mcp_settings(self) -> Dict[str, Any]:
         """获取MCP服务配置"""
@@ -116,6 +130,11 @@ class YamlConfigManager(ConfigInterface):
             'system_settings': {
                 'demo_mode': False,
                 'log_level': 'INFO'
+            },
+            'ai_settings': {
+                'learning_rate': 1e-4,
+                'trust_threshold': 0.5,
+                'priority_weights': {}
             },
             'mcp_settings': {
                 'server_name': 'smart_email_ai',

@@ -21,7 +21,7 @@ from pathlib import Path
 class EmailSender:
     """邮件发送器 - 支持多种邮件服务器和动态发件人配置"""
     
-    def __init__(self, email_address: str = None, password: str = None, provider: str = None, use_default: bool = False):
+    def __init__(self, email_address: str, password: str, provider: Optional[str] = None, use_default: bool = False):
         """
         初始化邮件发送器
         
@@ -38,11 +38,12 @@ class EmailSender:
         self.email_address = email_address
         self.password = password
         
-        # 自动检测邮件服务商
-        if not provider:
-            provider = self._detect_provider(email_address)
-        
-        self.provider = provider
+        # 确定邮件服务商
+        # 如果调用方显式指定 provider，则直接使用；否则根据邮箱地址自动检测
+        if provider:
+            self.provider = provider.lower()
+        else:
+            self.provider = self._detect_email_provider()
         
         # iCloud SMTP 配置
         self.smtp_config = {
@@ -64,12 +65,17 @@ class EmailSender:
         }
         
         # 验证支持的服务商
-        if provider not in self.smtp_config:
-            raise ValueError(f"不支持的邮件服务商: {provider}")
+        if self.provider not in self.smtp_config:
+            raise ValueError(f"不支持的邮件服务商: {self.provider}")
         
-        # 检测邮箱类型
-        self.provider = self._detect_email_provider()
-        self.server_config = self.smtp_config.get(self.provider, self.smtp_config['icloud'])
+        # 确保类型安全的配置获取
+        server_config_raw = self.smtp_config.get(self.provider, self.smtp_config['icloud'])
+        if isinstance(server_config_raw, dict):
+            self.server_config: Dict[str, Any] = server_config_raw
+        else:
+            # 备用配置
+            self.server_config = self.smtp_config['icloud']
+        
         self.connected = False
         
     def _detect_email_provider(self) -> str:
@@ -411,12 +417,12 @@ Smart Email AI 分析报告
     
     @classmethod
     def create_default_sender(cls) -> 'EmailSender':
-        """创建默认发件人实例（Jerry的iCloud）
-        
-        Returns:
-            EmailSender: 使用默认配置的邮件发送器实例
+        """（已弃用）创建默认发件人实例
+
+        由于 `EmailSender` 现在需要显式的 `email_address` 与 `password`，
+        此方法已被弃用。如需默认发件人，请使用 `configure_default_email_sender` MCP 工具进行配置。
         """
-        return cls(use_default=True)
+        raise RuntimeError("create_default_sender 已弃用，请使用 configure_default_email_sender 进行配置")
 
 
 # 全局邮件发送器实例（需要配置邮箱凭证后才能使用）

@@ -16,6 +16,9 @@ from pathlib import Path
 import pickle
 import threading
 from collections import OrderedDict
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
+from contextlib import contextmanager
 
 
 class MemoryCache:
@@ -78,18 +81,24 @@ class MemoryCache:
 class SQLiteCache:
     """L2缓存 - SQLite本地数据库 (快速访问)"""
     
-    def __init__(self, db_path: str = "data/email_cache.db"):
+    def __init__(self, db_path: str = "data/email_cache.db", pool_size: int = 5):
         self.db_path = db_path
+        self.pool_size = pool_size
+        self._connection_pool = []
+        self._pool_lock = threading.Lock()
         self.ensure_db_directory()
         self.init_database()
-    
+        self._init_connection_pool()
+
     def ensure_db_directory(self):
         """确保数据库目录存在"""
         Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
     
     def init_database(self):
         """初始化数据库表结构"""
-        with sqlite3.connect(self.db_path) as conn:
+        with sqlite3.connect(self.db_path, check_same_thread=False) as conn:
+            # 应用性能优化设置
+            self._apply_performance_optimizations(conn)
             # 邮件索引表
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS emails_index (
@@ -141,7 +150,7 @@ class SQLiteCache:
     def store_email(self, email_data: Dict[str, Any]) -> bool:
         """存储邮件到缓存"""
         try:
-            with sqlite3.connect(self.db_path) as conn:
+            with self._get_connection() as conn:
                 # 计算内容哈希
                 content_str = f"{email_data.get('subject', '')}{email_data.get('body_text', '')}"
                 content_hash = hashlib.md5(content_str.encode()).hexdigest()
@@ -202,7 +211,7 @@ class SQLiteCache:
     def get_recent_emails(self, count: int = 10, account_type: str = 'icloud') -> List[Dict[str, Any]]:
         """快速获取最近邮件"""
         try:
-            with sqlite3.connect(self.db_path) as conn:
+            with self._get_connection() as conn:
                 conn.row_factory = sqlite3.Row
                 cursor = conn.execute("""
                     SELECT e.*, c.body_text, c.body_html, c.attachments_json
@@ -229,7 +238,7 @@ class SQLiteCache:
     def search_emails(self, query: str, limit: int = 20) -> List[Dict[str, Any]]:
         """全文搜索邮件"""
         try:
-            with sqlite3.connect(self.db_path) as conn:
+            with self._get_connection() as conn:
                 conn.row_factory = sqlite3.Row
                 cursor = conn.execute("""
                     SELECT e.*, c.body_text, c.body_html
@@ -255,7 +264,7 @@ class SQLiteCache:
     def get_cache_stats(self) -> Dict[str, Any]:
         """获取缓存统计信息"""
         try:
-            with sqlite3.connect(self.db_path) as conn:
+            with self._get_connection() as conn:
                 cursor = conn.execute("SELECT COUNT(*) FROM emails_index")
                 total_emails = cursor.fetchone()[0]
                 
@@ -303,6 +312,56 @@ class SQLiteCache:
             score += 5
         
         return min(100, max(0, score))
+
+    def _init_connection_pool(self):
+        """初始化连接池"""
+        with self._pool_lock:
+            for _ in range(self.pool_size):
+                conn = sqlite3.connect(self.db_path, check_same_thread=False)
+                conn.row_factory = sqlite3.Row
+                self._apply_performance_optimizations(conn)
+                self._connection_pool.append(conn)
+
+    def _apply_performance_optimizations(self, conn: sqlite3.Connection) -> None:
+        """应用SQLite性能优化设置"""
+        try:
+            # WAL模式 - 提高并发性能
+            conn.execute("PRAGMA journal_mode=WAL")
+            # 同步模式 - 平衡性能和数据安全
+            conn.execute("PRAGMA synchronous=NORMAL")
+            # 缓存大小 - 增加内存缓存
+            conn.execute("PRAGMA cache_size=10000")
+            # 临时存储 - 使用内存存储临时数据
+            conn.execute("PRAGMA temp_store=memory")
+            # 页面大小 - 优化存储效率
+            conn.execute("PRAGMA page_size=4096")
+            # 内存映射 - 提高读取性能
+            conn.execute("PRAGMA mmap_size=268435456")  # 256MB
+        except Exception as e:
+            # 如果PRAGMA设置失败，记录但不中断连接创建
+            pass
+
+    @contextmanager
+    def _get_connection(self):
+        """从连接池获取连接"""
+        with self._pool_lock:
+            if self._connection_pool:
+                conn = self._connection_pool.pop()
+            else:
+                # 池子空了，创建新连接
+                conn = sqlite3.connect(self.db_path, check_same_thread=False)
+                conn.row_factory = sqlite3.Row
+                # 应用性能优化设置，确保与池化连接一致
+                self._apply_performance_optimizations(conn)
+        
+        try:
+            yield conn
+        finally:
+            with self._pool_lock:
+                if len(self._connection_pool) < self.pool_size:
+                    self._connection_pool.append(conn)
+                else:
+                    conn.close()
 
 
 class EmailCacheManager:
@@ -412,7 +471,9 @@ class EmailCacheManager:
         # 如果指定了账户类型，清空对应的SQLite缓存
         if account_type:
             try:
-                with sqlite3.connect(self.sqlite_cache.db_path) as conn:
+                with sqlite3.connect(self.sqlite_cache.db_path, check_same_thread=False) as conn:
+                    # 应用性能优化设置
+                    self.sqlite_cache._apply_performance_optimizations(conn)
                     # 先删除依赖表中的数据，再删除主表数据
                     conn.execute("DELETE FROM email_content WHERE email_id IN (SELECT id FROM emails_index WHERE account_type = ?)", (account_type,))
                     conn.execute("DELETE FROM email_fts WHERE email_id IN (SELECT id FROM emails_index WHERE account_type = ?)", (account_type,))
@@ -426,7 +487,9 @@ class EmailCacheManager:
         else:
             # 清空所有SQLite缓存
             try:
-                with sqlite3.connect(self.sqlite_cache.db_path) as conn:
+                with sqlite3.connect(self.sqlite_cache.db_path, check_same_thread=False) as conn:
+                    # 应用性能优化设置
+                    self.sqlite_cache._apply_performance_optimizations(conn)
                     # 先删除依赖表，再删除主表
                     conn.execute("DELETE FROM email_content")
                     conn.execute("DELETE FROM email_fts")

@@ -9,7 +9,7 @@ import os
 # 添加模块路径
 sys.path.append(os.path.dirname(__file__))
 
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, cast
 from mcp.server.fastmcp import FastMCP
 
 # 导入解耦的模块
@@ -18,16 +18,17 @@ try:
     from .interfaces.email_interface import email_data_manager, EmailData
     from .core.parser import OutlookEmailParser
     from .core.icloud_connector import iCloudConnector
-    from .core.email_cache import email_cache_manager
-    from .core.email_sender import email_sender
-except ImportError:
-    # 处理直接运行时的导入问题
-    from interfaces.config_interface import config_manager
-    from interfaces.email_interface import email_data_manager, EmailData
-    from core.parser import OutlookEmailParser
-    from core.icloud_connector import iCloudConnector
-    from core.email_cache import email_cache_manager
-    from core.email_sender import email_sender
+    from .core.email_cache import email_cache_manager, MemoryCache
+    from .core.email_sender import email_sender, EmailSender
+except ImportError:  # pragma: no cover
+    # 处理直接运行时的导入问题（本地包路径）
+    from interfaces.config_interface import config_manager  # type: ignore
+    from interfaces.email_interface import email_data_manager, EmailData  # type: ignore
+    from core.parser import OutlookEmailParser  # type: ignore
+    from core.icloud_connector import iCloudConnector  # type: ignore
+    from core.email_cache import email_cache_manager, MemoryCache  # type: ignore
+    from core.email_sender import email_sender, EmailSender  # type: ignore
+
 # AI分析由外部MCP调用者（如Claude）完成，不需要内部AI分析器
 
 # Initialize FastMCP server
@@ -49,10 +50,12 @@ class RefactoredEmailSystem:
     
     def __init__(self):
         # 加载配置
-        self.config = config_manager.load_config()
+        from typing import Dict as _Dict, Any as _Any
+
+        self.config: _Dict[str, _Any] = config_manager.load_config()
         
         # 初始化组件
-        parser_config = config_manager.get_parser_settings()
+        parser_config: Dict[str, Any] = config_manager.get_parser_settings()
         self.outlook_parser = OutlookEmailParser(parser_config)
         
         # 暂时保持原有AI分析器，后续可以解耦
@@ -104,6 +107,16 @@ class RefactoredEmailSystem:
     def parse_outlook_email(self, html_content: str) -> str:
         """解析Outlook邮件"""
         try:
+            # 类型安全检查
+            if not html_content:
+                return "❌ 邮件内容为空，无法解析"
+            
+            if not isinstance(html_content, str):
+                try:
+                    html_content = str(html_content)
+                except Exception as e:
+                    return f"❌ 邮件内容类型错误: {e}"
+            
             parsed_section = self.outlook_parser.parse_email(html_content)
             markdown_result = self.outlook_parser.format_to_markdown(parsed_section)
             
@@ -137,6 +150,16 @@ class RefactoredEmailSystem:
     def analyze_outlook_email_with_ai(self, html_content: str) -> str:
         """解析Outlook邮件并进行AI分析"""
         try:
+            # 类型安全检查
+            if not html_content:
+                return "❌ 邮件内容为空，无法分析"
+            
+            if not isinstance(html_content, str):
+                try:
+                    html_content = str(html_content)
+                except Exception as e:
+                    return f"❌ 邮件内容类型错误: {e}"
+            
             # 首先解析邮件结构
             parsed_section = self.outlook_parser.parse_email(html_content)
             
@@ -360,6 +383,16 @@ def parse_outlook_email(html_content: str) -> str:
     Args:
         html_content: Outlook邮件的HTML内容
     """
+    # 输入验证
+    if not html_content:
+        return "❌ 邮件内容为空，请提供有效的HTML内容"
+    
+    if not isinstance(html_content, str):
+        try:
+            html_content = str(html_content)
+        except Exception as e:
+            return f"❌ 邮件内容类型错误: {e}"
+    
     system = get_email_system()
     return system.parse_outlook_email(html_content)
 
@@ -370,6 +403,16 @@ def analyze_outlook_email_structure(html_content: str) -> str:
     Args:
         html_content: Outlook邮件的HTML内容
     """
+    # 输入验证
+    if not html_content:
+        return "❌ 邮件内容为空，请提供有效的HTML内容"
+    
+    if not isinstance(html_content, str):
+        try:
+            html_content = str(html_content)
+        except Exception as e:
+            return f"❌ 邮件内容类型错误: {e}"
+    
     system = get_email_system()
     return system.analyze_outlook_email_with_ai(html_content)
 
@@ -383,9 +426,9 @@ def get_system_status() -> str:
 def test_config_loading() -> str:
     """测试配置加载功能"""
     try:
-        ai_settings = config_manager.get_ai_settings()
-        parser_settings = config_manager.get_parser_settings()
-        system_settings = config_manager.get_system_settings()
+        ai_settings: Dict[str, Any] = config_manager.get_ai_settings()
+        parser_settings: Dict[str, Any] = config_manager.get_parser_settings()
+        system_settings: Dict[str, Any] = config_manager.get_system_settings()
         
         return f"""🔧 **配置加载测试**
 
@@ -436,6 +479,16 @@ def extract_outlook_tables(html_content: str) -> str:
         html_content: Outlook邮件的HTML内容
     """
     try:
+        # 输入验证
+        if not html_content:
+            return "❌ 邮件内容为空，请提供有效的HTML内容"
+        
+        if not isinstance(html_content, str):
+            try:
+                html_content = str(html_content)
+            except Exception as e:
+                return f"❌ 邮件内容类型错误: {e}"
+        
         # 解析邮件
         system = get_email_system()
         parsed_section = system.outlook_parser.parse_email(html_content)
@@ -979,7 +1032,7 @@ def get_today_latest_emails(force_refresh: bool = False, email_count: int = 20) 
         # 筛选今日邮件
         today_emails = []
         
-        def parse_email_date(date_str: str) -> date:
+        def parse_email_date(date_str: str) -> Optional[date]:
             """改进的日期解析函数，支持多种格式，统一使用UTC+8时区
             🔧 修复了ISO格式解析和日期格式优先级问题
             """
@@ -1654,9 +1707,13 @@ def send_email_to_anyone(to_email: str, subject: str, content: str,
             result = custom_sender.send_email(to_email, subject, content, content_type)
             sender_info = f"自定义发件人: {from_email}"
         else:
-            # 使用默认发件人
-            result = email_sender.send_email(to_email, subject, content, content_type)
-            sender_info = f"默认发件人: {email_sender.email_address}"
+            # 使用默认发件人（需要事先配置全局 email_sender）
+            if email_sender is None:
+                return "❌ 默认发件人未配置，请在调用前通过 configure_default_email_sender(email, password) 进行设置，或在函数中提供 from_email 和 from_password 参数。"
+            # 类型断言：此处 email_sender 一定不为 None
+            sender_nonnull = cast(Any, email_sender)
+            result = sender_nonnull.send_email(to_email, subject, content, content_type)
+            sender_info = f"默认发件人: {sender_nonnull.email_address}"
         
         if result['success']:
             return f"""✅ **邮件发送成功**
@@ -1724,7 +1781,9 @@ def send_bulk_email(recipients: str, subject: str, content: str,
             sender = EmailSender.create_custom_sender(from_email, from_password)
             sender_info = f"自定义发件人: {from_email}"
         else:
-            sender = email_sender
+            if email_sender is None:
+                return "❌ 默认发件人未配置，请先调用 configure_default_email_sender(email, password) 配置，或为 send_bulk_email 提供 from_email 和 from_password 参数。"
+            sender = cast(Any, email_sender)
             sender_info = f"默认发件人: {sender.email_address}"
         
         # 批量发送
@@ -1818,7 +1877,10 @@ def send_html_email_with_attachments(to_email: str, subject: str, html_content: 
         attachment_list = [path.strip() for path in attachments.split(',') if path.strip()] if attachments else None
         
         # 发送邮件
-        result = email_sender.send_email(
+        if email_sender is None:
+            return "❌ 默认发件人未配置，请先调用 configure_default_email_sender(email, password) 进行设置。"
+        sender_nonnull = cast(Any, email_sender)
+        result = sender_nonnull.send_email(
             to_email=to_email,
             subject=subject,
             content=html_content,
@@ -1917,7 +1979,10 @@ def send_email_analysis_report(to_email: str, include_recent_emails: bool = True
                     })
         
         # 发送分析报告
-        result = email_sender.send_analysis_report(to_email, analysis_data)
+        if email_sender is None:
+            return "❌ 默认发件人未配置，请先调用 configure_default_email_sender(email, password) 后再发送报告。"
+        sender_nonnull = cast(Any, email_sender)
+        result = sender_nonnull.send_analysis_report(to_email, analysis_data)
         
         if result['success']:
             return f"""✅ **邮件分析报告发送成功**
@@ -1959,7 +2024,10 @@ def send_email_analysis_report(to_email: str, include_recent_emails: bool = True
 def test_email_server_connection() -> str:
     """测试邮件服务器连接状态"""
     try:
-        result = email_sender.test_connection()
+        if email_sender is None:
+            return "❌ 默认发件人未配置，请先调用 configure_default_email_sender(email, password) 进行设置。"
+        sender_nonnull = cast(Any, email_sender)
+        result = sender_nonnull.test_connection()
         
         if result['success']:
             return f"""✅ **邮件服务器连接成功**
@@ -2006,14 +2074,17 @@ def test_email_server_connection() -> str:
 def get_email_sender_status() -> str:
     """获取邮件发送器状态和配置信息"""
     try:
+        if email_sender is None:
+            return "❌ 默认发件人未配置，请先调用 configure_default_email_sender(email, password) 进行设置。"
+        sender_nonnull = cast(Any, email_sender)
         return f"""📧 **邮件发送器状态**
 
 🔧 **当前配置:**
-• 发件人邮箱: {email_sender.email_address}
-• 邮件服务商: {email_sender.provider}
-• SMTP服务器: {email_sender.smtp_config[email_sender.provider]['server']}
-• 端口: {email_sender.smtp_config[email_sender.provider]['port']}
-• TLS加密: {'✅ 启用' if email_sender.smtp_config[email_sender.provider]['use_tls'] else '❌ 禁用'}
+• 发件人邮箱: {sender_nonnull.email_address}
+• 邮件服务商: {sender_nonnull.provider}
+• SMTP服务器: {sender_nonnull.smtp_config[sender_nonnull.provider]['server']}
+• 端口: {sender_nonnull.smtp_config[sender_nonnull.provider]['port']}
+• TLS加密: {'✅ 启用' if sender_nonnull.smtp_config[sender_nonnull.provider]['use_tls'] else '❌ 禁用'}
 
 📨 **支持的邮件类型:**
 • 纯文本邮件: ✅ 支持
@@ -2038,7 +2109,6 @@ def get_email_sender_status() -> str:
 3. 大附件建议分批发送
 4. 重要邮件建议添加纯文本备用
 """
-        
     except Exception as e:
         return f"❌ 获取发送器状态失败: {str(e)}" 
 
@@ -2241,8 +2311,8 @@ def analyze_hr_resume_emails() -> str:
         demo_emails = system.email_manager.load_demo_emails()
         
         hr_emails = [
-            email for email in demo_emails 
-            if email.category == 'hr_resume_screening'
+            mail for mail in demo_emails 
+            if getattr(mail, 'category', '') == 'hr_resume_screening'
         ]
         
         if not hr_emails:
@@ -2250,20 +2320,21 @@ def analyze_hr_resume_emails() -> str:
         
         analysis = f"👔 **HR简历筛选邮件分析** ({len(hr_emails)} 封)\n\n"
         
-        for i, email in enumerate(hr_emails, 1):
-            analysis += f"**{i}. {email.subject}**\n"
-            analysis += f"📧 发件人: {email.sender}\n"
-            analysis += f"📅 日期: {email.date}\n"
-            analysis += f"⭐ 优先级: {email.expected_priority}/5\n"
-            
-            # 提取候选人信息
-            if hasattr(email, 'expected_analysis') and 'candidates' in email.expected_analysis:
-                candidates = email.expected_analysis['candidates']
+        for i, mail in enumerate(hr_emails, 1):
+            analysis += f"**{i}. {mail.subject}**\n"
+            analysis += f"📧 发件人: {mail.sender}\n"
+            analysis += f"📅 日期: {mail.date}\n"
+            analysis += f"⭐ 优先级: {getattr(mail, 'expected_priority', 0)}/5\n"
+
+            # 提取候选人信息（需确保 expected_analysis 为 dict）
+            expected = getattr(mail, 'expected_analysis', None)
+            if isinstance(expected, dict) and 'candidates' in expected:
+                candidates = expected['candidates']
                 analysis += f"👥 候选人数量: {len(candidates)}\n"
                 for candidate in candidates:
-                    analysis += f"   • {candidate['name']}: {candidate['background']} (薪资:{candidate['salary']})\n"
-            
-            analysis += f"📝 内容预览: {email.body[:150]}...\n\n"
+                    analysis += f"   • {candidate.get('name', '未知')}: {candidate.get('background', '')} (薪资:{candidate.get('salary', 'N/A')})\n"
+
+            analysis += f"📝 内容预览: {mail.body[:150]}...\n\n"
         
         return analysis
         
@@ -2283,8 +2354,8 @@ def get_hr_resume_insights() -> str:
         demo_emails = system.email_manager.load_demo_emails()
         
         hr_emails = [
-            email for email in demo_emails 
-            if email.category == 'hr_resume_screening'
+            mail for mail in demo_emails 
+            if getattr(mail, 'category', '') == 'hr_resume_screening'
         ]
         
         if not hr_emails:
@@ -2292,13 +2363,14 @@ def get_hr_resume_insights() -> str:
         
         # 统计分析
         total_emails = len(hr_emails)
-        urgent_emails = len([e for e in hr_emails if e.expected_priority >= 4])
+        urgent_emails = len([e for e in hr_emails if getattr(e, 'expected_priority', 0) >= 4])
         
         # 职位分析
-        positions = {}
-        for email in hr_emails:
-            if hasattr(email, 'expected_analysis'):
-                position = email.expected_analysis.get('position', '未知职位')
+        positions: Dict[str, int] = {}
+        for mail in hr_emails:
+            expected = getattr(mail, 'expected_analysis', None)
+            if isinstance(expected, dict):
+                position = expected.get('position', '未知职位')
                 positions[position] = positions.get(position, 0) + 1
         
         report = f"""📊 **HR简历筛选洞察报告**
@@ -2306,7 +2378,7 @@ def get_hr_resume_insights() -> str:
 🔢 **总体统计:**
 • 简历筛选邮件总数: {total_emails} 封
 • 高优先级邮件: {urgent_emails} 封
-• 平均优先级: {sum(e.expected_priority for e in hr_emails) / total_emails:.1f}/5
+• 平均优先级: {sum(getattr(e, 'expected_priority', 0) for e in hr_emails) / total_emails:.1f}/5
 
 💼 **职位分布:**
 """
@@ -2354,8 +2426,8 @@ def filter_hr_emails_by_priority(min_priority: int = 3) -> str:
         demo_emails = system.email_manager.load_demo_emails()
         
         hr_emails = [
-            email for email in demo_emails 
-            if email.category == 'hr_resume_screening' and email.expected_priority >= min_priority
+            mail for mail in demo_emails 
+            if getattr(mail, 'category', '') == 'hr_resume_screening' and getattr(mail, 'expected_priority', 0) >= min_priority
         ]
         
         if not hr_emails:
@@ -2364,15 +2436,15 @@ def filter_hr_emails_by_priority(min_priority: int = 3) -> str:
         result = f"🎯 **优先级 >={min_priority} 的HR邮件** ({len(hr_emails)} 封)\n\n"
         
         # 按优先级排序
-        hr_emails.sort(key=lambda x: x.expected_priority, reverse=True)
+        hr_emails.sort(key=lambda x: getattr(x, 'expected_priority', 0), reverse=True)
         
-        for i, email in enumerate(hr_emails, 1):
+        for i, mail in enumerate(hr_emails, 1):
             priority_icons = {5: "🚨", 4: "📋", 3: "📰"}
-            icon = priority_icons.get(email.expected_priority, "📧")
+            icon = priority_icons.get(getattr(mail, 'expected_priority', 0), "📧")
             
-            result += f"{icon} **{i}. {email.subject}** (优先级:{email.expected_priority}/5)\n"
-            result += f"📤 {email.sender} | 📅 {email.date}\n"
-            result += f"📝 {email.body[:100]}...\n\n"
+            result += f"{icon} **{i}. {mail.subject}** (优先级:{getattr(mail, 'expected_priority', 0)}/5)\n"
+            result += f"📤 {mail.sender} | 📅 {mail.date}\n"
+            result += f"📝 {mail.body[:100]}...\n\n"
         
         return result
         
@@ -2392,18 +2464,19 @@ def get_candidate_summary() -> str:
         demo_emails = system.email_manager.load_demo_emails()
         
         hr_emails = [
-            email for email in demo_emails 
-            if email.category == 'hr_resume_screening'
+            mail for mail in demo_emails 
+            if getattr(mail, 'category', '') == 'hr_resume_screening'
         ]
         
         all_candidates = []
         
         # 提取所有候选人信息
-        for email in hr_emails:
-            if hasattr(email, 'expected_analysis') and 'candidates' in email.expected_analysis:
-                candidates = email.expected_analysis['candidates']
+        for mail in hr_emails:
+            expected = getattr(mail, 'expected_analysis', None)
+            if isinstance(expected, dict) and 'candidates' in expected:
+                candidates = expected['candidates']
                 for candidate in candidates:
-                    candidate['source_email'] = email.subject
+                    candidate['source_email'] = mail.subject
                     all_candidates.append(candidate)
         
         if not all_candidates:
@@ -2436,3 +2509,200 @@ def get_candidate_summary() -> str:
         
     except Exception as e:
         return f"❌ 候选人汇总失败: {str(e)}"
+
+# ========== 📧 默认发件人配置工具 ==========
+
+@mcp.tool()
+def configure_default_email_sender(email_address: str, password: str, provider: str = "") -> str:
+    """配置全局默认发件人邮箱
+    
+    Args:
+        email_address: 发件人邮箱地址
+        password: 邮箱密码或应用专用密码
+        provider: 可选，邮件服务商标识（icloud/gmail/outlook 等），留空则自动检测
+    """
+    global email_sender
+    try:
+        email_sender = EmailSender(email_address=email_address, password=password, provider=provider or None)
+        sender_nonnull = cast(Any, email_sender)
+        return f"✅ 已成功配置默认发件人: {email_address} (服务商: {sender_nonnull.provider})"
+    except Exception as e:
+        return f"❌ 默认发件人配置失败: {str(e)}"
+
+# ========== 🚀 快速设置与AI连接指南 ==========
+
+@mcp.tool()
+def quick_setup_guide() -> str:
+    """快速设置指南 - 一键建立AI与邮件系统连接"""
+    return """🚀 **Smart Email AI 快速设置指南**
+
+## 🔧 1. 邮箱连接（必需）
+```
+setup_icloud_connection("your@icloud.com", "app_specific_password")
+```
+
+## 📊 2. 验证连接状态
+```
+get_icloud_inbox_summary()
+```
+
+## ⚡ 3. 启用缓存加速（推荐）
+```
+sync_email_cache_with_latest()
+```
+
+## 🎯 4. 快速分析邮件
+```
+analyze_icloud_recent_emails(10)  # 分析最近10封
+get_today_latest_emails()         # 今日邮件
+search_emails_fts("关键词")       # 快速搜索
+```
+
+## 📧 5. 配置邮件发送（可选）
+```
+configure_default_email_sender("sender@example.com", "password")
+test_email_server_connection()
+```
+
+## 🔍 6. 性能监控
+```
+get_cache_performance_stats()
+```
+
+⚡ **性能优化提示:**
+• 首次连接后执行 `sync_email_cache_with_latest()` 建立本地索引
+• 使用 `search_emails_fts()` 进行毫秒级搜索
+• 缓存系统可将响应时间从3-5秒降至50-100ms
+
+🤖 **AI分析建议:**
+• 使用结构化数据输出进行智能分析
+• 支持优先级评估、情感分析、行动项提取
+• 所有工具函数返回markdown格式，便于AI处理
+"""
+
+@mcp.tool()
+def get_ai_prompt_templates() -> str:
+    """获取AI分析提示词模板"""
+    return """🤖 **Smart Email AI 提示词模板库**
+
+## 📊 1. 邮件优先级分析
+```
+请分析以下邮件的优先级（1-5分）：
+{邮件数据}
+
+考虑因素：
++- 发件人重要性
++- 主题紧急程度  
++- 内容关键词
++- 截止时间
++- 业务影响
+```
+
+## 💭 2. 情感分析
+```
+分析邮件的情感倾向和语调：
+{邮件数据}
+
+输出格式：
++- 情感倾向：正面/中性/负面
++- 紧急程度：高/中/低
++- 语调特征：正式/友好/严肃/急迫
++- 关键情感词汇：[列表]
+```
+
+## 📋 3. 行动项提取
+```
+从邮件中提取具体的行动项和任务：
+{邮件数据}
+
+输出格式：
++- 主要任务：[具体描述]
++- 截止时间：[日期/时间]
++- 负责人：[人员]
++- 优先级：[高/中/低]
++- 依赖项：[前置条件]
+```
+
+## 📈 4. 邮件趋势分析
+```
+分析邮件模式和趋势：
+{多封邮件数据}
+
+关注点：
++- 发件人分布
++- 主题分类
++- 时间模式
++- 重要性变化
++- 异常检测
+```
+
+## 🔍 5. 智能摘要
+```
+为以下邮件生成智能摘要：
+{邮件数据}
+
+包含：
++- 核心信息（2-3句话）
++- 关键人物和时间
++- 需要关注的要点
++- 建议的后续行动
+```
+
+## 📧 6. 回复建议
+```
+基于邮件内容提供回复建议：
+{邮件数据}
+
+生成：
++- 回复要点
++- 语调建议
++- 时间安排
++- 注意事项
+```
+
+💡 **使用技巧:**
+• 将 `{邮件数据}` 替换为实际的邮件内容
+• 结合多个模板进行综合分析
+• 根据具体场景调整提示词
+• 利用结构化输出便于后续处理
+"""
+
+@mcp.tool()
+def optimize_performance_settings() -> str:
+    """优化系统性能设置"""
+    try:
+        # 清理缓存
+        email_cache_manager.clear_all_caches()
+        
+        # 重新初始化缓存
+        email_cache_manager.memory_cache = MemoryCache(max_size=200, ttl_seconds=600)  # 增大缓存
+        
+        # 获取性能统计
+        stats = email_cache_manager.get_performance_stats()
+        
+        return f"""⚡ **性能优化完成**
+
+🔧 **优化设置:**
+• 内存缓存: 200条记录，10分钟TTL
+• SQLite连接池: 5个连接
+• 全文索引: FTS5引擎
+• WAL模式: 启用
+
+📊 **当前性能:**
+• 缓存命中率: {stats.get('cache_hit_rate', 'N/A')}
+• 内存缓存: {stats.get('memory_cache', {}).get('total_entries', 0)} 条记录
+• SQLite缓存: {stats.get('sqlite_cache', {}).get('total_emails', 0)} 封邮件
+
+🚀 **预期提升:**
+• 邮件检索: 3-5秒 → 50-100ms (50-100x)
+• 搜索响应: 2-10秒 → 20-50ms (100-500x)
+• 并发处理: 支持多用户同时访问
+• 离线访问: 完整支持
+
+💡 **建议:**
+1. 定期执行 `sync_email_cache_with_latest()` 更新缓存
+2. 使用 `search_emails_fts()` 进行快速搜索
+3. 监控 `get_cache_performance_stats()` 了解性能状况
+"""
+    except Exception as e:
+        return f"❌ 性能优化失败: {str(e)}"

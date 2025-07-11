@@ -3,7 +3,13 @@
 import re
 import html
 from bs4 import BeautifulSoup
-import html2text
+# HTML转文本处理（可选依赖）
+try:
+    import html2text
+    HTML2TEXT_AVAILABLE = True
+except ImportError:
+    HTML2TEXT_AVAILABLE = False
+    # 提供简单的HTML清理备用方案
 from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
 
@@ -22,20 +28,20 @@ class EmailSection:
 class OutlookEmailParser:
     """Outlook邮件解析器 - 解耦版本"""
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """
         初始化解析器
         
         Args:
             config: 解析器配置，包含forward_patterns, header_patterns等
         """
-        self.config = config or {}
+        self.config: Dict[str, Any] = config or {}
         self._init_patterns()
 
-    def _init_patterns(self):
+    def _init_patterns(self) -> None:
         """初始化匹配模式"""
         # 从配置获取转发邮件的常见分界标识
-        self.forward_patterns = self.config.get('forward_patterns', [
+        forward_patterns_raw = self.config.get('forward_patterns', [
             r'-----\s*原始邮件\s*-----',
             r'-----\s*Forwarded message\s*-----',
             r'发件人:',
@@ -43,6 +49,17 @@ class OutlookEmailParser:
             r'<div style=["\']border:none;border-top:solid #E1E1E1 1\.0pt',
             r'<div[^>]*border-top[^>]*>',
         ])
+        
+        # 确保类型安全
+        if isinstance(forward_patterns_raw, list):
+            self.forward_patterns: List[str] = [str(pattern) for pattern in forward_patterns_raw]
+        else:
+            self.forward_patterns = [
+                r'-----\s*原始邮件\s*-----',
+                r'-----\s*Forwarded message\s*-----',
+                r'发件人:',
+                r'From:',
+            ]
 
         # 从配置获取邮件头字段模式
         default_header_patterns = {
@@ -52,12 +69,26 @@ class OutlookEmailParser:
             'subject': [r'主题[:\s]*(.+?)(?:<br|$)', r'Subject[:\s]*(.+?)(?:<br|$)'],
             'date': [r'发送时间[:\s]*(.+?)(?:<br|$)', r'Sent[:\s]*(.+?)(?:<br|$)'],
         }
-        self.header_patterns = self.config.get('header_patterns', default_header_patterns)
+        
+        header_patterns_raw = self.config.get('header_patterns', default_header_patterns)
+        if isinstance(header_patterns_raw, dict):
+            self.header_patterns: Dict[str, List[str]] = {}
+            for key, patterns in header_patterns_raw.items():
+                if isinstance(patterns, list):
+                    self.header_patterns[str(key)] = [str(p) for p in patterns]
+                else:
+                    self.header_patterns[str(key)] = default_header_patterns.get(str(key), [])
+        else:
+            self.header_patterns = default_header_patterns
 
         # 表格检测配置
-        table_config = self.config.get('table_detection', {})
-        self.min_table_rows = table_config.get('min_rows', 2)
-        self.skip_layout_tables = table_config.get('skip_layout_tables', True)
+        table_config_raw = self.config.get('table_detection', {})
+        if isinstance(table_config_raw, dict):
+            self.min_table_rows: int = int(table_config_raw.get('min_rows', 2))
+            self.skip_layout_tables: bool = bool(table_config_raw.get('skip_layout_tables', True))
+        else:
+            self.min_table_rows = 2
+            self.skip_layout_tables = True
 
     def parse_email(self, email_content: str) -> EmailSection:
         """
@@ -69,6 +100,28 @@ class OutlookEmailParser:
         Returns:
             EmailSection: 解析后的邮件结构
         """
+        # 类型安全检查
+        if email_content is None:
+            raise ValueError("email_content 不能为 None")
+        
+        if not isinstance(email_content, str):
+            # 尝试转换为字符串
+            try:
+                email_content = str(email_content)
+            except Exception as e:
+                raise TypeError(f"无法将 email_content 转换为字符串: {e}")
+        
+        # 检查是否为空字符串
+        if not email_content.strip():
+            return EmailSection(
+                header={},
+                body="",
+                tables=[],
+                attachments=[],
+                forwarded_emails=[],
+                level=0
+            )
+        
         # 清理HTML并创建BeautifulSoup对象
         soup = self._clean_outlook_html(email_content)
 
@@ -80,6 +133,10 @@ class OutlookEmailParser:
 
     def _clean_outlook_html(self, html_content: str) -> BeautifulSoup:
         """清理Outlook特有的HTML标记"""
+        # 确保输入不为空
+        if not html_content:
+            return BeautifulSoup("", 'html.parser')
+        
         # 移除Word的XML命名空间和VML图形
         html_content = re.sub(r'<\?xml[^>]*>', '', html_content)
         html_content = re.sub(r'xmlns[^=]*="[^"]*"', '', html_content)
@@ -269,15 +326,18 @@ class OutlookEmailParser:
                 div.decompose()
 
         # 转换为纯文本
-        h = html2text.HTML2Text()
-        h.ignore_links = False
-        h.ignore_images = True
-        h.body_width = 0  # 不限制行宽
+        if HTML2TEXT_AVAILABLE:
+            h = html2text.HTML2Text()
+            h.ignore_links = False
+            h.ignore_images = True
+            h.body_width = 0  # 不限制行宽
 
-        text = h.handle(str(soup))
-
-        # 清理多余的空行
-        text = re.sub(r'\n\s*\n\s*\n', '\n\n', text)
+            text = h.handle(str(soup))
+        else:
+            # 提供简单的HTML清理备用方案
+            text = re.sub(r'<[^>]*>', '', str(soup)) # 移除所有HTML标签
+            text = re.sub(r'\s+', ' ', text) # 清理多余空白
+            text = re.sub(r'\n\s*\n\s*\n', '\n\n', text) # 清理多余的空行
 
         return text.strip()
 
