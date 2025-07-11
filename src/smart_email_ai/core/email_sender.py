@@ -67,7 +67,15 @@ class EmailSender:
         # 验证支持的服务商
         if self.provider not in self.smtp_config:
             raise ValueError(f"不支持的邮件服务商: {self.provider}")
-        self.server_config = self.smtp_config.get(self.provider, self.smtp_config['icloud'])
+        
+        # 确保类型安全的配置获取
+        server_config_raw = self.smtp_config.get(self.provider, self.smtp_config['icloud'])
+        if isinstance(server_config_raw, dict):
+            self.server_config: Dict[str, Any] = server_config_raw
+        else:
+            # 备用配置
+            self.server_config = self.smtp_config['icloud']
+        
         self.connected = False
         
     def _detect_email_provider(self) -> str:
