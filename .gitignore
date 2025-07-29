@@ -27,3 +27,20 @@ logs/
 # Temporary files
 ~/
 tmp/
+
+# Security and sensitive data
+data/config.yaml.backup
+*.backup
+*.env
+.env
+config_local.yaml
+*_credentials.json
+*_password.txt
+
+# Email cache and temporary data
+data/email_cache.db*
+data/processed_emails/
+temp_*
+
+# Test files
+test_*.py

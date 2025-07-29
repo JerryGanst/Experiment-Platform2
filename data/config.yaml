@@ -73,7 +73,7 @@ timezone:
 # 邮件发送配置
 email_sender:
   default_sender:
-    email: "jerrywsx@icloud.com"
+    email: "your_email@icloud.com"  # 请替换为您的邮箱
     name: "Smart Email AI"
     provider: "icloud"
   
